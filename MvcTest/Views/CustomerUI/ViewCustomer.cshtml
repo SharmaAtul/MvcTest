@@ -1,0 +1,31 @@
+﻿@model MvcTest.ViewModels.CustomerVM
+@using MvcTest.Models;
+
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ViewCustomer</title>
+</head>
+<body>
+    <div>
+        @*@using (Html.BeginForm("SubmitCustomer", "Customer", FormMethod.Post))
+         {
+        <i>Customer Name:</i> @Model.CustomerName<br />
+        <i>Customer Code:</i> @Model.CustomerCode<br />
+        }*@
+        @using(Html.BeginForm("SearchCustomer","Customer", FormMethod.Post))
+        {
+        <b>Search Customer :</b> <input type="text" name="txtCustomerName" /> <input type="submit" value="Search" />
+        }
+        @Html.Partial("partialCustomerList",Model)
+        
+    </div>
+</body>
+</html>

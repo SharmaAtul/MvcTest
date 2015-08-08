@@ -1,0 +1,16 @@
+﻿@model MvcTest.ViewModels.CustomerVM
+@using MvcTest.Models;
+
+<table>
+    <tr>
+        <td>Customer Code</td>
+        <td>Customer Name</td>
+    </tr>
+    @foreach (Customer o in Model.Customers)
+    { 
+        <tr style="color=@o.Color">
+            <td style="color=@o.Color">@o.CustomerCode</td>
+            <td style="color=@o.Color">@o.CustomerName</td>
+        </tr>
+    }
+</table>

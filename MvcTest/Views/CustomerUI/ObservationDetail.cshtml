@@ -1,0 +1,525 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ObservationDetail</title>
+
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/ui-bootstrap-custom-0.13.2.min.js"></script>
+    <script src="~/Scripts/ui-bootstrap-custom-tpls-0.13.2.min.js"></script>
+    <link href="~/Scripts/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/angular-route.js"></script>
+    <script src="~/ModelJs/AppConfig.js"></script>
+    <script src="~/ModelJs/ObservationDetail.js"></script>
+    <script src="~/ModelJs/dynamicQuestionDirective.js"></script>
+    <script src="~/ModelJs/locationDirective.js"></script>
+    <link href="~/Scripts/ui-bootstrap-custom-0.13.2-csp.css" rel="stylesheet" />
+    <script src="~/Scripts/defiant.min.js"></script>
+    @*for json filter*@
+    <link href="~/Scripts/custom.css" rel="stylesheet" />
+    <script src="~/ModelJs/fileUploader.js"></script>
+    <script src="~/ModelJs/FileSaver.min.js"></script>
+    <script src="~/Scripts/modalPopUp.js"></script>
+</head>
+
+    
+
+<script type="text/javascript" language="javascript">
+
+    var app = angular.module("myapp", ['ui.bootstrap']);
+    app.directive('ngDynamicquestion', ngDynamicquestion);
+    app.directive('ngLocation', ngLocation);
+    app.directive('fileModel', fileModel);
+    app.directive('ngConfirmClick', ngConfirmClick);
+
+    app.controller("ObservationDetail", ObservationDetail);
+    app.controller('modalPopUp', modalPopUp)
+
+    app.factory('authInterceptor', authInterceptor);
+    app.service('fileUpload', fileUpload);
+
+    app.config(function ($sceDelegateProvider) {
+        $sceDelegateProvider.resourceUrlWhitelist(['self', '**']);
+    });
+
+    app.config(function ($httpProvider) {
+        $httpProvider.interceptors.push('authInterceptor');
+    });
+
+    app.config(['$locationProvider', function ($locationProvider) {
+        $locationProvider.html5Mode(false);
+    }]);
+
+</script>
+<body ng-app="myapp" style="margin:4px 7px 2px 4px;">
+    <script type="text/ng-template" id="userModalPopUp.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Test Modal</h3>
+        </div>
+        <div class="modal-body">
+            <form class="form-horizontal" name="userForm" novalidate>
+                    <div class="form-group">
+                        <label class="control-label col-xs-1"></label>
+                        <div class="col-xs-10">
+                        <p class="form-control-static">Enter any part of name, email or unique id and click 'Search':</p>
+                        </div>
+                    </div>
+                    <div class="form-group" show-errors>
+                        <label class="control-label col-xs-1"></label>
+                        <div class="col-xs-9">
+                            <input type="text" ng-model="searchTerm" class="form-control form-control-medium" name="userInfo" required placeholder="Enter any part of name, email or unique id" />
+                        @*</div>
+                        <div class="col-xs-1">*@
+                            <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="getUsers()">
+                                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group" show-errors>
+                        <label class="control-label col-xs-1"></label>
+                        <div class="col-xs-9">
+                            <select size=10 class="form-control">
+                            <option ng-repeat="user in userData" value="{{user.userID}}" ng-click="updateUser(user)" >
+                                {{user.alias}}
+                            </option>
+                            </select>
+                        </div>
+                    </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="selectUser()">Done</button>
+            <button class="btn btn-link" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    <script type="text/ng-template" id="myModalContent.html">
+        <div class="modal-header">
+            <h3 class="modal-title">{{actionItem.modalTitle}}</h3>
+        </div>
+            <div class="modal-body">
+                
+                @*<div class="col-xs-6">*@
+                    <form class="form-horizontal" name="actionItemForm" novalidate>
+                        <div class="form-group">
+                            </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Action Item Number</label>
+                            <div class="col-xs-3">
+                                <p class="form-control-static">{{actionItem.actionNum}}</p>
+                                </div>
+                        </div>
+                       <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Action ID</label>
+                            <div class="col-xs-3">
+                                <p class="form-control-static">{{actionItem.actionID}}</p>
+                                </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Report Number</label>
+                            <div class="col-xs-3">
+                                <p class="form-control-static">{{actionItem.reportNum}}</p>
+                                </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Report Description</label>
+                            <div class="col-xs-3">
+                                <p class="form-control-static">{{actionItem.actionSourceDescription}}</p>
+                                </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Action Item Description</label>
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control" name="actionItemDetail" ng-model="actionItem.actionItem" required placeholder="Description" />
+                                </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Assigned To</label>
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control form-control-small" name="assignedToAlias" ng-model="actionItem.assignedTo.alias" required placeholder="Select Assigned to " />
+                                <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="searchUser()">
+                                    <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Priority</label>
+                            <div class="col-xs-3">
+                               <select class="form-control" ng-model='actionItem.priority'>
+                                    <option ng-repeat="item in priorityList" 
+                                        ng-selected='item.priorityID==actionItem.priority'
+                                        value="{{item.priorityID}}" >
+                                        {{item.priority}}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Preventive / Corrective</label>
+                            <div class="col-xs-3">
+                               <select type="radio" class="form-control" ng-model='actionItem.preventive'>
+                                    <option ng-selected='actionItem.recommendationLevelID=="P"' value="P" > Preventive </option>
+                                    <option ng-selected='actionItem.recommendationLevelID=="C"' value="C" > Corrective </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Target Date</label>
+                            <div class="col-xs-3">
+                               <input type="text" class="form-control form-control-small" name="targetDate" ng-model="actionItem.targetDate" required placeholder="Enter Target Date" />
+                            </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Approval Required</label>
+                            <div class="col-xs-3">
+                               <div class="checkbox"><label><input type="checkbox" ng-checked="actionItem.isApprovalRequired"
+                                ng-model="actionItem.isApprovalRequired"/> Is Approval Required</label></div>
+                            </div>
+                        </div>
+                        <div ng-show="actionItem.isApprovalRequired" class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Approver</label>
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control form-control-small" name="approver" ng-model="actionItem.approver.alias" required placeholder="Select Approver " />
+                                <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="searchApprover()">
+                                    <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">CC Users</label>
+                            <div class="col-xs-3">
+                                @*<input type="text" class="form-control form-control-small" name="approver" ng-model="actionItem.approver.alias" required placeholder="Select Approver " />*@
+                                <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="addCCUser()">
+                                    <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Add CC User
+                                </button>
+                            </div>
+                        </div>
+                        <div ng-show="actionItem.ccUsers.length > 0" class="form-group" show-errors>
+                            <label class="control-label col-xs-3"></label>
+                            <div class="col-xs-3">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>User Name</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="user in actionItem.ccUsers">
+                                            <td>{{user.alias}}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-default" aria-label="Left Align" confirmed-click="onCCUserDelete(1)" 
+                                                    ng-confirm-click="Are you sure to delete?">
+                                                    <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr ng-hide="actionItem.ccUsers.length > 0">
+                                            <td colspan="2">No Team Memeber selected...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </form>
+                @*</div>
+                <div class="col-xs-6">*@
+                    <form class="form-horizontal" name="actionItemFormComplete" novalidate>
+                        <div class="form-group">
+                            </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Completion Date</label>
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control form-control-small" name="completedDate" ng-model="actionItem.completedDate" required placeholder="Enter Completion Date" />
+                                </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Direct Cost</label>
+                            <div class="col-xs-3">
+                                <input class="form-control form-control-x-small" type="text" ng-model="actionItem.directCost"/>
+                                <select class="form-control form-control-x-small" ng-model="actionItem.currencyID">
+                                    <option ng-selected="actionItem.currencyID == data.methodID"
+                                     ng-repeat="data in currencyList" value="{{data.methodID}}"
+                                    >{{data.methodName}}
+                                    </option>
+                                    </select>
+                                </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Indirect Person Hours</label>
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control form-control-small" name="indirectPersonHrs" ng-model="actionItem.indirectPersonHrs" required placeholder="Enter Indirect Person Hours" />
+                                </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Response</label>
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control form-control-small" name="response" ng-model="actionItem.response" required placeholder="Enter User Response" />
+                                </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Verified Date</label>
+                            <div class="col-xs-3">
+                                <input type="text" class="form-control form-control-small" name="verifiedDate" ng-model="actionItem.verifiedDate" required placeholder="Enter Verified Date" />
+                                </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Completed By</label>
+                            <div class="col-xs-3">{{actionItem.completedBy.alias}}
+                                </div>
+                        </div>
+                        <div class="form-group" show-errors>
+                            <label class="control-label col-xs-3">Verified By</label>
+                            <div class="col-xs-3">{{actionItem.verifiedBy.alias}}</div>
+                        </div>
+                    </form>
+                @*</div>*@
+                
+        </div>
+        <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="ok()">Done</button>
+                <button class="btn btn-link" ng-click="cancel()">Cancel</button>
+            </div>
+                @*<ul>
+                    <li ng-repeat="item in items">
+                        <a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>
+                    </li>
+                </ul>
+                Selected: <b>{{ selected.item }}</b>
+            </div>*@
+            
+
+    </script>
+    <div ng-controller="ObservationDetail">
+    <tabset style="z-index:100">
+            <tab>
+                <tab-heading>Observation Detail</tab-heading>
+    
+    @*<div ng-view></div>*@
+    
+        <form class="form-horizontal" name="observationForm" novalidate>
+            <div class="form-group">
+                </div>
+            <div class="form-group" show-errors>
+                <label class="control-label col-xs-2">Report Number</label>
+                <div class="col-xs-10">
+                    <p class="form-control-static">{{observation.reportNum}}</p>
+                    </div>
+            </div>
+            <div class="form-group" show-errors>
+                <label class="control-label col-xs-2">Observation Date</label>
+                <div class="col-xs-10">
+                    <p ng-hide="enableEdit" class="form-control-static">{{observation.tourDateTime}}</p>
+                    <input ng-show="enableEdit" type="text" class="form-control form-control-small" name="tourDateTime" ng-model="observation.tourDateTime" required placeholder="tourDateTime" />
+                    <p ng-show="enableEdit" class="help-block" ng-if="observationForm.tourDateTime.$error.required">Observation Date is required</p>
+                </div>
+            </div>
+            <div class="form-group" show-errors>
+                <label class="control-label col-xs-2">Safety Method</label>
+                <div class="col-xs-10">
+                    <p ng-hide="enableEdit" class="form-control-static">{{observation.observationType}}</p>
+                    <select ng-show="enableEdit" class="form-control form-control-small" name="safetyObservationTypeID" ng-model="observation.safetyObservationTypeID" required placeholder="safetyObservationTypeID"
+                        ng-options="method.methodID as method.methodName for method in obsMethods.data">
+                        <option value="">-Select-</option>
+                    </select>
+                    <p class="help-block" ng-if="observationForm.safetyObservationTypeID.$error.required">Safety method is required</p>
+                </div>
+            </div>
+            <div ng-hide="enableEdit" class="form-group" show-errors>
+                <label class="control-label col-xs-2">Location Path</label>
+                <div class="col-xs-10">
+                    <p ng-hide="enableEdit" class="form-control-static">{{observation.locationPath}}</p>
+                </div>
+            </div>
+            <div ng-repeat="locationLevel in locationLevelData.locationLevels" ng-show="enableEdit" class="form-group" show-error>
+                <label class="control-label col-xs-2">{{locationLevel.levelName}}</label>
+                <div class="col-xs-10">
+                    <span ng-location level-no="{{locationLevel.levelNo}}" parent-locid="{{locationLevel.parentLocId}}"></span>
+                </div>
+            </div>
+            <div>
+                <label class="control-label col-xs-2">Observation Team</label>
+                <div class="table-responsive col-xs-10"> 
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Person Class</th>
+                                <th>Role name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="member in observation.soTourTeam">
+                                <td>{{member.name}}</td>
+                                <td>{{member.userEmail}}</td>
+                                <td>{{member.personClassName}}</td>
+                                <td>{{member.roleName}}</td>
+                            </tr>
+                            <tr ng-hide="observation.soTourTeam.length > 0">
+                                <td colspan="4">No Team Memeber selected...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="form-group" show-error>
+                <label class="control-label col-xs-2">Detail/Description</label>
+                <div class="col-xs-10">
+                    <p class="form-control-static" ng-hide="enableEdit">{{observation.details}}</p>
+                    <input ng-show="enableEdit" type="text" class="form-control" name="observationDetail" ng-model="observation.detail" required placeholder="observationDetail" />
+                    <p ng-show="enableEdit" class="help-block" ng-if="observationForm.observationDetail.$error.required">Observation Date is required</p>
+                </div>
+            </div>
+            <div class="form-group" ng-repeat="question in observation.sotDynamicQs">
+                <label class="control-label col-xs-2">{{question.question}}</label>
+                <div class="col-xs-10">
+                    <p class="form-control-static" ng-hide="enableEdit">{{question.displayAnswer}}</p>
+                    <span ng-dynamicquestion ng-model="question.answer" question-type="{{question.questionType}}"></span>
+                </div>
+            </div>
+            <div class="form-group" ng-repeat="question in observation.sotMethodDynamicQs">
+                <label class="control-label col-xs-2">{{question.question}}</label>
+                <div class="col-xs-10">
+                    <p class="form-control-static" ng-hide="enableEdit">{{question.displayAnswer}}</p>
+                    <span ng-dynamicquestion ng-model="question.answer" question-type="{{question.questionType}}"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-2"></label>
+                <div class="col-xs-10">
+                    <button class="btn btn-primary" ng-show="enableEdit" type="button" value="Save" ng-click="SaveData()">Save</button>
+                    <button class="btn btn-link" ng-show="enableEdit" type="button" value="Cancel" ng-click="toggleView()">back to View</button>
+                    <button class="btn btn-info" ng-hide="enableEdit" type="button" value="Edit" ng-click="toggleView()">Edit</button>
+                    <button class="btn btn-link" ng-hide="enableEdit" type="button" value="Cancel" ng-click="CancelData()" >cancel</button>
+                </div>
+                @*<input ng-hide="enableEdit" type="button" value="Edit" ng-click="toggleView()"/>
+                <input ng-hide="enableEdit" type="button" value="Cancel" ng-click="CancelData()"/>
+                <input ng-show="enableEdit" type="button" value="Save" ng-click="SaveData()"/>
+                <input ng-show="enableEdit" type="button" value="Cancel" ng-click="toggleView()"/>*@
+            </div>
+            <div class="form-group"></div>
+        </form>
+                 <tabset style="z-index:100">   
+                     <tab>
+                        <tab-heading>Observations/Results</tab-heading>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Result Num</th>
+                                            <th>Result</th>
+                                            <th>Category</th>
+                                            <th>Class</th>
+                                            <th>Action Item Completed <br />/ Pending / Overdue</th>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="result in observation.soTResults">
+                                            <td>{{result.obsNum}}</td>
+                                            <td>{{result.obsResult}}</td>
+                                            <td>{{result.soCategory}}</td>
+                                            <td>{{result.classCode}}</td>
+                                            <td>
+                                                <span style="color:{{ result.completedColor }}">{{result.completed}}</span>/
+                                                <span style="color:{{ result.pendingColor }}">{{result.pending}}</span>/
+                                                <span style="color:{{ result.overdueColor }}">{{result.overdue}}</span>
+                                            </td>
+                                            <td><a>edit</a></td>
+                                            <td><a>delete</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </tab>
+                        <tab>
+                            <tab-heading>Attachment</tab-heading>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <th>Attachment</th>
+                                        <th>Description</th>
+                                        <th>Observation Number</th>
+                                        <th>Attachment Size</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr ng-repeat="attachment in observation.sotAttachments">
+                                        <td>
+                                            <a href="" ng-click="downloadFile(attachment.fileName)">{{attachment.fileName}}</a>
+                                        </td>
+                                        <td>{{attachment.attachmentDesc}}</td>
+                                        <td>{{attachment.obsNum}}</td>
+                                        <td>--</td>
+                                        <td><a>delete</a></td>
+                                    </tr>
+                                </table>
+                                    <input type="file" file-model="myFile" my-file="myFile"/>
+                                    @*<input type="text" ng-model="fileName"/>*@
+                                    <button ng-click="uploadFile()">upload me</button>
+                            </div>
+                        </tab>
+                        <tab>
+                            <tab-heading>Editors</tab-heading>
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <th>Editors</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr ng-repeat="editor in observation.sotEditors">
+                                        <td>{{editor.editor}} {{(editor.userEmail)}}</td>
+                                        <td><a>edit</a></td>
+                                        <td><a>delete</a></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </tab>
+                        <tab>
+                            <tab-heading>Linked Hazards</tab-heading>
+                            <div >
+                    
+                            </div>
+                        </tab>
+                    </tabset>
+            </tab>
+            <tab>
+                <tab-heading>Action Items</tab-heading>
+                <div class="table-responsive">
+                    <br />
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Action Num</th>
+                            <th>Action Item Desc</th>
+                            <th>Assigned To</th>
+                            <th>Dates</th>
+                            <th>Observation Number</th>
+                            <th></th>
+                        </tr>
+                        <tr ng-repeat="actionItem in observation.sotActionItems">
+                            <td>
+                                <button class="btn btn-link" ng-hide="enableEdit" type="button" ng-click="editActionItem('lg',actionItem)" >{{actionItem.actionNum}}</button>
+                            </td>
+                            <td>{{actionItem.actionItem}}</td>
+                            <td>{{actionItem.assignedTo.alias}}</td>
+                            <td>{{actionItem.created}}<br />{{actionItem.targetDate}}</td>
+                            <td>{{actionItem.obsNum}}</td>
+                            <td><a>delete</a></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <button class="btn btn-warning" ng-click="addActionItem('lg')">Add Action Item</button>
+                <button class="btn btn-link" ng-hide="enableEdit" type="button" value="Cancel" ng-click="CancelData()" >cancel</button>
+            </tab>
+        </tabset>
+        <br />
+    </div>
+</body>
+</html>

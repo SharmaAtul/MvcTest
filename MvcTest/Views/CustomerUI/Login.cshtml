@@ -1,0 +1,38 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <script src="~/Scripts/jquery-2.1.4.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/ModelJs/Login.js"></script>
+    <script src="~/ModelJs/AppConfig.js"></script>
+</head>
+    <script type="text/javascript" language="javascript">
+        var app = angular.module("myapp", [])
+
+        app.controller("loginModel", loginModel);
+
+        app.factory('authInterceptor', authInterceptor);
+
+        app.config(function ($httpProvider) {
+            $httpProvider.interceptors.push('authInterceptor');
+        });
+    </script>
+<body ng-app="myapp">
+    <div ng-controller="loginModel">
+        <input type="text" name="userName" ng-model ="UserLogin.username" />
+        <input type="text" name="userName" ng-model ="UserLogin.password"/>
+        <input type="button" value="Login" name="btnLogin" ng-click="Login()" />
+
+        <label name="lblErrMsg">{{errorMessage}}</label>
+    </div>
+</body>
+</html>

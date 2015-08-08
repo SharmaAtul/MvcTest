@@ -1,0 +1,65 @@
+﻿@model MvcTest.Models.Customer
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AddCustomer</title>
+</head>
+<script src="~/Scripts/jquery-2.1.4.js"></script>
+<script src="~/Scripts/jquery.validate.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+<script src="~/Scripts/angular.js"></script>
+<script src="~/ModelJs/OrderFactory.js"></script>
+<script src="~/ModelJs/CustomerFactory.js"></script>
+<script src="~/ModelJs/CustomerVM.js"></script>
+
+    <script type="text/javascript" language="javascript">
+
+        var app = angular.module("myapp", [])
+            .factory('orderFactory', orderFactory)
+            .factory('customerFactory', customerFactory)
+            .factory('customerOrderFactory', customerOrderFactory);
+
+        app.controller("CustomerVM",CustomerVM);
+    </script>
+<body ng-app="myapp">
+    <div ng-controller="CustomerVM">
+        <i>Customer Name:</i> <input type="text" ng-model="Customer.CustomerName" name="CustomerName"/><br />
+            @Html.ValidationMessageFor(m=>m.CustomerName)<br />
+        <i>Customer Code:</i> <input type="text" ng-model="Customer.CustomerCode" name="CustomerCode"/><br />
+            @Html.ValidationMessageFor(m=>m.CustomerCode)<br />
+        <i>Customer Amount:</i> <input type="text" style="background-color:{{ Customer.CustomerAmountColor}}" 
+            ng-model="Customer.CustomerAmount" name="CustomerAmount"/><br />
+            @Html.ValidationMessageFor(m=>m.CustomerCode)<br />
+            <input type="button" id="add" value="Add Customer" ng-click="addCustomer()" />
+            <input type="button" id="update" value="Update Customer" ng-click="updateCustomer()" />
+        <table>
+            <tr>
+                <td>Order Number</td>
+            </tr>
+            <tr ng-repeat="order in Customer.CustomerOrders">
+                <td>{{ order.OrderNumber }}</td>
+            </tr>
+        </table>
+        Enter Order Num: <input type="text" name="OrderNumber" ng-Model="Order.OrderNumber"/> <input type="button" value="Add Order" ng-click="AddOrder()" />
+        <table>
+            <tr>
+                <td>Customer Code</td>
+                <td>Customer Name</td>
+                <td>Customer Amount</td>
+            </tr>
+            <tr ng-repeat="cust in Customers">
+                <td>{{ cust.CustomerCode }}</td>
+                <td>{{ cust.CustomerName }}</td>
+                <td style="background-color:{{ cust.CustomerAmountColor }}">{{ cust.CustomerAmount }}</td>
+                <td><a href="#" ng-click="getCustomerById(cust.CustomerCode)">select</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

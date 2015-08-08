@@ -1,0 +1,89 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ObservationList</title>
+    <script src="~/Scripts/jquery-2.1.4.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/ui-bootstrap-custom-0.13.2.min.js"></script>
+    <script src="~/Scripts/ui-bootstrap-custom-tpls-0.13.2.min.js"></script>
+    <link href="~/Scripts/bootstrap.css" rel="stylesheet" />
+    <script src="~/ModelJs/Observations.js"></script>
+    
+    <script src="~/ModelJs/AppConfig.js"></script>
+</head>
+
+    <script type="text/javascript" language="javascript">
+
+        var app = angular.module("myapp", ['ui.bootstrap'])
+        app.directive('ngConfirmClick', ngConfirmClick);
+        app.controller("Observations", Observations);
+
+        app.factory('authInterceptor', authInterceptor);
+
+        app.config(function ($httpProvider) {
+            $httpProvider.interceptors.push('authInterceptor');
+        });
+    </script>
+<body ng-app="myapp" style="margin:4px 7px 2px 4px;">
+    <div class="page-header">
+       <h3>Observation List 
+          @*<small>Subtext for header</small>*@
+       </h3>
+    </div>
+
+    <div class="table-responsive" ng-controller="Observations"> 
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Report Number</th>
+                    <th>Location</th>
+                    <th>Date</th>
+                    <th>Observation Type</th>
+                    <th>Description</th>
+                    <th>Action Item Completed <br />/ Pending / Overdue</th>
+                    <th>Created By</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="obs in observationData">
+                    <td><a href="#" ng-click="GetDetail(obs.soTourID);">{{obs.reportNum}}</a></td>
+                    <td>{{obs.locationPath}}</td>
+                    <td>{{obs.tourDateTime}}</td>
+                    <td>{{obs.observationType}}</td>
+                    <td>{{obs.details}}</td>
+                    <td><span style="color:{{ obs.completedColor }}">{{obs.completed}}</span>/
+                        <span style="color:{{ obs.pendingColor }}">{{obs.pending}}</span>/
+                        <span style="color:{{ obs.overdueColor }}">{{obs.overdue}}</span>
+
+                    </td>
+                    <td>{{obs.createdBy}}</td>
+                    <td>
+                        <button type="button" class="btn btn-default" aria-label="Left Align" confirmed-click="onConfirmOK()" 
+                            ng-confirm-click="Are you sure to delete?">
+                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="text-align:right">
+            <pagination boundary-links="true" max-size="maxSize" ng-change ="LoadData()" total-items="totalCount" ng-model="filterData.pageNumber" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></pagination>
+        </div>
+    </div>
+        @*<pagination 
+      ng-model="filterData.pageNumber"
+      total-items="totalCount"
+      max-size="maxSize" ng-change ="LoadData()" 
+      boundary-links="true">
+    </pagination><br />*@
+</body>
+</html>
