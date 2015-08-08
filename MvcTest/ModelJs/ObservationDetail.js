@@ -349,10 +349,11 @@
             //$log.info('Modal dismissed at: ' + new Date());
         });
     };
-
+    //$scope.actionItem = {};
     $scope.addActionItem = function (size) {
+        var actionItem = {};
         actionItem.modalTitle = "Add New Action Item";
-        currentTpl = 'myModalContent.html';
+        
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
             templateUrl: 'myModalContent.html',// $templateCache.get('myModalContent.html'),
@@ -360,7 +361,7 @@
             size: size,
             resolve: {
                 items: function () {
-                    return $scope.items;
+                    return actionItem;
                 }
             }
         });
