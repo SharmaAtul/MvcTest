@@ -36,10 +36,10 @@
             //responseHTML = '<tr ng-repeat="locationLevel in locationLevels" ng-show="enableEdit">';
             //responseHTML += '<td>{{levelName}}</td><td>';
             //responseHTML = '<span ng-repeat ="n in selectedItem track by $index | "';
-            responseHTML = '<select class="form-control form-control-small"><option value="0" ng-click="updateLocations(locationLevel.levelNo,0)">-Select-</option><option'
-            responseHTML += ' ng-selected="location.locationId == locationLevel.locId"'
-            responseHTML += ' ng-click="updateLocations(locationLevel.levelNo,location.locationId)"'
-            responseHTML += ' ng-repeat="location in locationData.locations | filter : {levelNo : locationLevel.levelNo} | filter : { parentLocId : locationLevel.parentLocId }" value="{{location.locationId}}"'
+            responseHTML = '<select class="form-control"><option value="0" ng-click="updateLocations(locationLevel.dLocationLevelNo,0)">-Select-</option><option'
+            responseHTML += ' ng-selected="location.dLocationID == locationLevel.locId"'
+            responseHTML += ' ng-click="updateLocations(locationLevel.dLocationLevelNo,location.dLocationID)"'
+            responseHTML += ' ng-repeat="location in locationData.locations | filter : {levelNo : locationLevel.dLocationLevelNo} | filter : { parentDLocationID : locationLevel.parentLocId }" value="{{location.dLocationID}}"'
             responseHTML += '>{{location.locationName}}'
             responseHTML += '</option></select>'
             //responseHTML += '</td></tr>'
