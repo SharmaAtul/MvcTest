@@ -1,4 +1,4 @@
-﻿function ObservationDetail($scope, $http, $location, $window, $modal, $templateCache, fileUpload) {
+﻿function ObservationDetail($rootScope, $scope, $http, $location, $window, $modal, fileUpload) {
     
     $scope.observation = {
         "details": "",
@@ -55,63 +55,9 @@
         "unitGroupID": 0
     }
 
-    //$scope.$watch("observation.sotDynamicQs", function () {
-    //    for (var i = 0; i < $scope.observation.sotDynamicQs.length; i++)
-    //    {
-    //        var question = $scope.observation.sotDynamicQs[i];
-    //        var str = question.multipleAnswersIds;//"1,2,3,4,5,6";
-    //        alert(str);
-    //        question.arrMultipleAnswersIds = new Array();
-    //        // this will return an array with strings "1", "2", etc.
-    //        question.arrMultipleAnswersIds = str.split(",");
-    //    }
-    //})
+    $rootScope.loading = true;
 
-    //$scope.upload = function (files) {
-    //    console.log("if you got here, the file selection dialog was shown, so this should work.");
-    //    console.log(files);
-    //};
-
-    //$scope.showModal = function () {
-    //    $modal.open({
-    //        template: "<div style='height:200px'><div class='button' ng-file-select='' ng-file-change='upload($files)'>Select File doesn't work</div></div>"
-    //    });
-    //};
-
-    $scope.obsMethods = {
-        data:[
-                    {
-                        methodID: 1,
-                        methodName: "Test"
-                    },
-                    {
-                        methodID: 2,
-                        methodName: "Test-2"
-                    },
-                    {
-                        methodID: 5,
-                        methodName: "Test-3"
-                    }
-        ]};
-
-    $scope.WhatIfQuestionTmp = {
-        data: [
-                    {
-                        methodID: 2485,
-                        methodName: "Test"
-                    },
-                    {
-                        methodID: 2486,
-                        methodName: "Test-2"
-                    },
-                    {
-                        methodID: 2487,
-                        methodName: "Test-3"
-                    }
-        ]
-    };
-
-    
+    $scope.obsMethods = {data:[]};
 
     $scope.questionMaster = [
         {
@@ -128,6 +74,19 @@
                         {
                             methodID: 2487,
                             methodName: "Test-3"
+                        }
+            ]
+        },
+        {
+            questionID: 19860,
+            data: [
+                        {
+                            methodID: 12926,
+                            methodName: "Yes"
+                        },
+                        {
+                            methodID: 12927,
+                            methodName: "No"
                         }
             ]
         },
@@ -149,7 +108,11 @@
         data: [
                     {
                         methodID: 548,
-                        methodName: "Is Supervised"
+                        methodName: "Yes"
+                    },
+                    {
+                        methodID: 549,
+                        methodName: "No"
                     }
             ]
         },
@@ -207,191 +170,354 @@
 
     ];
 
-    //$scope.optionData = [2485,2486];
-    $scope.locationLevelData = {
-        locationLevels : [
-        {
-            levelNo: 1,
-            levelName: 'Loc Level 1',
-            parentLocId: 0,
-            locId: 0
-        },
-        {
-            levelNo: 2,
-            levelName: 'Loc Level 2',
-            parentLocId: 0,
-            locId: 0
-        },
-        {
-            levelNo: 3,
-            levelName: 'Loc Level 3',
-            parentLocId: 0,
-            locId: 0
-        }
-        ]
-    }
+    $scope.locationLevelData = { locationLevels : [ ] }
 
-
-    $scope.locationData = {
-        locations: [
-            {
-                levelNo: 1,
-                locationName: 'test loc 1',
-                locationId: 1,
-                parentLocId: 0
-            },
-            {
-                levelNo: 2,
-                locationName: 'test loc 11',
-                locationId: 31,
-                parentLocId: 1
-            },
-            {
-                levelNo: 3,
-                locationName: 'test loc 111',
-                locationId: 111,
-                parentLocId: 31
-            },
-            {
-                levelNo: 3,
-                locationName: 'test loc 112',
-                locationId: 112,
-                parentLocId: 31
-            },
-            {
-                levelNo: 2,
-                locationName: 'test loc 12',
-                locationId: 12,
-                parentLocId: 1
-            },
-            {
-                levelNo: 3,
-                locationName: 'test loc 121',
-                locationId: 121,
-                parentLocId: 12
-            },
-            {
-                levelNo: 3,
-                locationName: 'test loc 122',
-                locationId: 122,
-                parentLocId: 12
-            },
-            {
-                levelNo: 1,
-                locationName: 'test loc 2',
-                locationId: 2,
-                parentLocId: 0
-            },
-            {
-                levelNo: 2,
-                locationName: 'test loc 21',
-                locationId: 21,
-                parentLocId: 2
-            },
-            {
-                levelNo: 3,
-                locationName: 'test loc 211',
-                locationId: 111,
-                parentLocId: 21
-            },
-            {
-                levelNo: 3,
-                locationName: 'test loc 212',
-                locationId: 112,
-                parentLocId: 21
-            },
-            {
-                levelNo: 2,
-                locationName: 'test loc 22',
-                locationId: 22,
-                parentLocId: 2
-
-            },
-            {
-                levelNo: 3,
-                locationName: 'test loc 221',
-                locationId: 221,
-                parentLocId: 22
-            },
-            {
-                levelNo: 3,
-                locationName: 'test loc 222',
-                locationId: 222,
-                parentLocId: 22
-            }
-        ]
-    }
-
-    $scope.items = ['item1', 'item2', 'item3'];
+    $scope.personClasses = []
+    
+    $scope.locationData = {locations: []}
 
     $scope.animationsEnabled = true;
-    $scope.currentTpl = "";
+    //$scope.currentTpl = "";
 
-    $scope.editActionItem = function (size, actionItem) {
-        actionItem.reportNum = $scope.observation.reportNum;
-        actionItem.modalTitle = "Edit Action Item (" + actionItem.actionNum + ")";
+    $scope.open = function ($event) {
+        $scope.openedTargetDt = true;
+    };
+
+    $scope.$watch("observation.tourDateTime", function () {
+        $scope.openedCompletedDt = false;
+    })
+
+    $scope.displayFormat = 'MM-dd-yyyy';
+    $scope.parserFormat = 'MM-dd-yyyy';
+
+    
+
+    $scope.obsCategories = [
+        {
+            lupID: 1,
+            lupValue: "Category-1",
+            obsSubCategories : [
+                {
+                    lupID: 1,
+                    lupValue: "Sub-Category-1"
+                },
+                {
+                    lupID: 2,
+                    lupValue: "Sub-Category-2"
+                },
+            ]
+        }
+    ]
+
+    $scope.obsClasses = [
+        {
+            lupID: 1,
+            lupValue: "ObsClass-1"
+        },{
+            lupID: 2,
+            lupValue: "ObsClass-2"
+        }
+    ]
+
+    $scope.editObservationResult = function (size,soTourID, soTourResultID, obsNum, indexNum) {
+        var data = {};
+        data.soTourID = soTourID;
+        data.soTourResultID = soTourResultID;
+
+        var safetyObsTypeData = $scope.observation.safetyObservation; //JSON.search($scope.obsMethods, '//*[lupID="' + $scope.observation.safetyObservationTypeID + '"]')[0];
+        data.obsClasses = safetyObsTypeData.soClass;
+        data.obsCategories = safetyObsTypeData.categories;
+        data.type = "ObsResult";
+
+        data.modalTitle = "Edit Observation Result (" + obsNum + ")";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'myModalContent.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: 'obsResultPopUp.html',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             size: size,
             resolve: {
                 items: function () {
-                    return actionItem;
+                    return data;
                 }
             }
         });
 
         modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
-            alert($scope.selected);
+            $scope.observation.soTResults[indexNum] = selectedItem;
+        }, function () {
+        });
+    };
+
+    $scope.addResult = function (size) {
+        var data = {};
+        data.soTourID = $scope.observation.soTourID;
+        data.soTourResultID = 0;
+        data.obsNum = $scope.observation.reportNum +"_R"+ ($scope.observation.soTResults.length+1).toString();
+        var safetyObsTypeData = $scope.observation.safetyObservation;//JSON.search($scope.obsMethods, '//*[lupID="' + $scope.observation.safetyObservationTypeID + '"]')[0];
+        data.obsClasses = safetyObsTypeData.soClass;
+        data.obsCategories = safetyObsTypeData.categories;
+        data.type = "ObsResult";
+
+        data.modalTitle = "Add Observation Result";
+        var modalInstance = $modal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'obsResultPopUp.html',// $templateCache.get('myModalContent.html'),
+            controller: 'modalPopUp',
+            size: size,
+            resolve: {
+                items: function () {
+                    return data;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (selectedItem) {
+            selectedItem.soTourID = $scope.observation.soTourID;
+            selectedItem.obsNum = $scope.observation.reportNum + "_R" + ($scope.observation.soTResults.length + 1).toString();
+            $scope.observation.soTResults.push(selectedItem);
+        }, function () {
+        });
+    };
+
+    $scope.addObservationResult = function (size) {
+        var data = {};
+        data.soTourID = $scope.observation.soTourID;
+        data.soTourResultID = 0;
+        data.obsNum = $scope.observation.reportNum + "_R" + ($scope.observation.soTResults.length + 1).toString();
+        var safetyObsTypeData = $scope.observation.safetyObservation; //JSON.search($scope.obsMethods, '//*[lupID="' + $scope.observation.safetyObservationTypeID + '"]')[0];
+        data.obsClasses = safetyObsTypeData.soClass;
+        data.obsCategories = safetyObsTypeData.categories;
+        data.type = "ObsResult";
+
+        data.modalTitle = "Add Observation Result";
+        var modalInstance = $modal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'obsObservationResultPopUp.html',// $templateCache.get('myModalContent.html'),
+            controller: 'modalPopUp',
+            size: size,
+            resolve: {
+                items: function () {
+                    return data;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (selectedItem) {
+            selectedItem.soTourID = $scope.observation.soTourID;
+            selectedItem.obsNum = $scope.observation.reportNum + "_R" + ($scope.observation.soTResults.length + 1).toString();
+            $scope.observation.soTResults.push(selectedItem);
+        }, function () {
+        });
+    };
+
+    $scope.editActionItem = function (size, actionIndex) {
+        var actionItem = $scope.observation.sotActionItems[actionIndex];
+        var data = {};
+        data.actionItem = actionItem;
+        data.actionItem.reportNum = $scope.observation.reportNum;
+        data.recommendationLevels = $scope.recommendationLevels;
+        data.currencies = $scope.currencies;
+        data.type = "ActionItem";
+
+        if (actionItem.priority == 1)
+            actionItem.priorityName = "Low";
+        else if (actionItem.priority == 2)
+            actionItem.priorityName = "Medium";
+        else if (actionItem.priority == 3)
+            actionItem.priorityName = "High";
+        else if (actionItem.priority == 4)
+            actionItem.priorityName = "Very High";
+
+        actionItem.modalTitle = "Edit Action Item (" + data.actionItem.actionNum + ")";
+        var modalInstance = $modal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'actionItemModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            controller: 'modalPopUp',
+            size: size,
+            resolve: {
+                items: function () {
+                    return data;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (selectedItem) {
+            $http.post(urlBase + "updateActionItem", selectedItem)
+            .success(function (result, status, header, config) {
+                if (result.statusCode) {
+                    selectedItem.actionID = result.data;
+                }
+            })
+            $scope.observation.sotActionItems[actionIndex] = selectedItem;
+            //alert($scope.selected);
         }, function () {
             //$log.info('Modal dismissed at: ' + new Date());
         });
     };
 
+    //$scope.actionItem = {};
     $scope.addActionItem = function (size) {
+        var actionItem = {};
         actionItem.modalTitle = "Add New Action Item";
-        currentTpl = 'myModalContent.html';
+        actionItem.assignedTo = {};
+        actionItem.approver = {};
+        actionItem.ccUsers = [];
+        actionItem.actionID = -1;
+        var data = {};
+        data.actionItem = actionItem
+        data.recommendationLevels = $scope.recommendationLevels;
+        data.currencies = $scope.currencies;
+
+        data.type = "ActionItem";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'myModalContent.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: 'actionItemModalPopUp.html',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             size: size,
             resolve: {
                 items: function () {
-                    return $scope.items;
+                    return data;
                 }
             }
         });
 
         modalInstance.result.then(function (selectedItem) {
-            $scope.selected = selectedItem;
-            alert($scope.selected);
+            selectedItem.actionNum = $scope.observation.reportNum + '_' + ($scope.observation.sotActionItems.length+1).toString();
+            selectedItem.actionSourceDescription = $scope.observation.details;
+            selectedItem.actionID = 0;
+            selectedItem.sourceID = $scope.id;
+            selectedItem.source = 'OTour';
+
+            $http.post(urlBase + "UpdateActionItem", selectedItem)
+            .success(function (result, status, header, config) {
+                if (result.statusCode) {
+                    selectedItem.actionID=result.data;
+                }
+            })
+            $scope.observation.sotActionItems.push(selectedItem)
+        }, function () {
+            
+        });
+    };
+
+    $scope.searchMember = function (member) {
+        var item = {};
+        item.modalTitle = "Search User";
+        item.type = "User";
+
+        var modalInstance = $modal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'userModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            controller: 'modalPopUp',
+            //size: size,
+            resolve: {
+                items: function () {
+                    return item;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (selectedUser) {
+            //var selectedUser = JSON.parse(selectedItem);
+            member.name = selectedUser.alias;
+            member.userID = selectedUser.userID;
+            member.userEmail = selectedUser.userEmail;
         }, function () {
             //$log.info('Modal dismissed at: ' + new Date());
         });
     };
+
+    $scope.addEditors = function () {
+        var item = {};
+        item.modalTitle = "Search User";
+        item.type = "User";
+        var modalInstance = $modal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'userModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            controller: 'modalPopUp',
+            //size: size,
+            resolve: {
+                items: function () {
+                    return item;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (selectedUser) {
+            //var selectedUser = JSON.parse(selectedItem);
+            $scope.observation.sotEditors.push(
+                {
+                    editor: selectedUser.alias,
+                    userEmail: selectedUser.userEmail,
+                    isActive: true,
+                    editorID: selectedUser.userID,
+                    eid: 0
+                });
+            //$scope.observation.sotEditors.push(selectedItem);
+        }, function () {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+
+    $scope.addAttachment = function (member) {
+        //var item = {};
+        //item.modalTitle = "Search User";
+        var modalInstance = $modal.open({
+            animation: $scope.animationsEnabled,
+            templateUrl: 'attachmentModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            controller: 'modalPopUp',
+            //size: size,
+            resolve: {
+                items: function () {
+                    return '';
+                }
+            }
+        });
+
+        modalInstance.result.then(function (attachmentDetails) {
+            var attachment = attachmentDetails;
+            attachment.source = 'OTour';
+            attachment.sourceID = $scope.observation.soTourID;
+            attachment = $scope.uploadFileToUrl(attachment);
+            
+            //$scope.sotAttachments = attachment;
+        }, function () {
+            //$log.info('Modal dismissed at: ' + new Date());
+        });
+    };
+
+    $scope.uploadFileToUrl = function (file) {
+        var fd = new FormData();
+        fd.append('description', file.description);
+        fd.append('file', file.file);
+        fd.append('source', file.source);
+        fd.append('sourceID', file.sourceID);
+        $http.post(urlBase + 'uploadFileTemp', fd, {
+            transformRequest: angular.identity,
+            headers: { 'Content-Type': undefined }
+        })
+        .success(function (attachment) {
+            $scope.observation.sotAttachments.push(attachment.data);
+        })
+        .error(function () {
+        });
+    }
+
+    $scope.fileUploaded= function(attachment)
+    {
+        $scope.observation.sotAttachments.push(attachment);
+    }
 
     $scope.toggleAnimation = function () {
         $scope.animationsEnabled = !$scope.animationsEnabled;
     };
 
-    //$scope.myName = "test";
-
-    // $scope.addActionItem= function(){
-    //     dlg = $dialogs.create('/dialogs/whatsyourname.html', 'modalPopUp', { name: $scope.myName }, { key: false, back: 'static' });
-    //     dlg.result.then(function (name) {
-    //         $scope.name = name;
-    //         alert($scope.name);
-    //     }, function () {
-    //         $scope.name = 'You decided not to enter in your name, that makes me sad.';
-    //     });
-    //}
+    $scope.onDeleteActionItem = function (indexToRemove) {
+        $scope.observation.sotActionItems.splice(indexToRemove, 1);
+    };
 
     function openSaveAsDialog(filename, content, mediaType) {
         var blob = new Blob([content], { type: mediaType });
-        console.log(blob);
         saveAs(blob, filename);
     }
 
@@ -433,20 +559,11 @@
 
     $scope.id = searchData.id;
 
-
     $scope.myFile = {};
-
-    //listen for the file selected event
-    $scope.$on("fileSelected", function (event, args) {
-        $scope.$apply(function () {
-            //add the file object to the scope's files collection
-            $scope.myFile = args.file;
-        });
-    });
 
     $scope.uploadFile = function () {
         var file = $scope.myFile;
-        console.dir(file);
+        //console.dir(file);
         //var uploadUrl = "/fileUpload";
         fileUpload.uploadFileToUrl(file);
     }
@@ -454,11 +571,12 @@
     $scope.updateLocations = function updateLocations(levelNo, locationId)
     {
         $scope.locationLevelData.locationLevels[levelNo].parentLocId = locationId;
+        $scope.observation.locationID = locationId;
 
         for (var index = levelNo+1; index <= $scope.locationLevelData.locationLevels.length; index++)
         {
             $scope.locationLevelData.locationLevels[index].parentLocId = 0;
-            $scope.locationLevelData.locationLevels[index-1].locId = 0;
+            $scope.locationLevelData.locationLevels[index - 1].locId = 0;
         }
     }
 
@@ -483,6 +601,39 @@
             return 'red';
     }
 
+    //$scope.observationMasterData = {};
+
+    $scope.data = {};
+    $scope.LoadMasterData = function () {
+        $http.get(urlBase + "getObservationMasterData")
+        .success(function (result, status, header, config) {
+            if (result.statusCode) {
+                
+                $scope.locationData.locations = result.data.locationModels;
+                $scope.locationLevelData.locationLevels = result.data.locationLevelModel;
+                $scope.personClasses = result.data.personClassModels;
+                $scope.obsMethods = result.data.safetyObservationType;
+                $scope.recommendationLevels = result.data.recommendationLevelModels;
+                $scope.currencies = result.data.currencies;
+            }
+        })
+    }
+
+    if ($window.sessionStorage.masterData == null || angular.isUndefined($window.sessionStorage.masterData) || $window.sessionStorage.masterData == "{}") {
+        $scope.LoadMasterData();
+        //$window.sessionStorage.masterData = JSON.stringify($scope.data);
+    }
+    else {
+        var data = JSON.parse($window.sessionStorage.masterData);
+        //var data = $window.sessionStorage.data;
+        $scope.locationData.locations = data.locationModels;
+        $scope.locationLevelData.locationLevels = data.locationLevelModel;
+        $scope.personClasses = data.personClassModels;
+        $scope.obsMethods = data.safetyObservationType;
+        $scope.recommendationLevels = data.recommendationLevelModels;
+        $scope.currencies = data.currencies;
+    }
+
     $scope.LoadData = function () {
         
         $http.get(urlBase + "GetSOTDetails/" + $scope.id)
@@ -490,7 +641,8 @@
             if (result.statusCode) {
                 $scope.observation = result.data;
                 //$scope.observation.locationID = 122;
-
+                var datePart = $scope.observation.tourDateTime.split('-');
+                $scope.observation.tourDateTime = new Date(parseInt(datePart[2]), parseInt(datePart[0]), parseInt(datePart[1]));
                 for (var i = 0; i < $scope.observation.soTResults.length; i++) {
                     var result = $scope.observation.soTResults[i];
                     result.completedColor = $scope.getCompletedColor(result.completed);
@@ -500,15 +652,17 @@
 
                 var locData = [];
 
-                var currLoc = JSON.search($scope.locationData, '//*[locationId="' + $scope.observation.locationID + '"]')[0];
+                var currLoc = JSON.search($scope.locationData, '//*[dLocationID="' + $scope.observation.locationID + '"]')[0];
                 while (true)
                 {
-                    if (!currLoc) break;
-                    locData.push(currLoc.locationId);
+                    if (!currLoc)
+                        break;
+
+                    locData.push(currLoc.dLocationID);
                     //alert(currLoc.locationId);
                     if (currLoc.parentLocId == 0)
                         break;
-                    currLoc = JSON.search($scope.locationData, '//*[locationId="' + currLoc.parentLocId + '"]')[0]; //$scope.getLocation(currLoc.parentLocId);
+                    currLoc = JSON.search($scope.locationData, '//*[dLocationID="' + currLoc.parentDLocationID + '"]')[0]; //$scope.getLocation(currLoc.parentLocId);
                 }
 
                 //alert(locData.length);
@@ -520,19 +674,98 @@
                     $scope.locationLevelData.locationLevels[index].parentLocId = locData[index - 1];
                     $scope.locationLevelData.locationLevels[index].locId = locData[index];
                 }
-                //$scope.selectedLocation = locData.reverse();
+                
+                //$rootScope.loading = false;
             }
         })
     }
+    $scope.sotRowEditNum = -1;
 
+    $scope.addTeamMember = function () {
+        var team = $scope.observation.soTourTeam.length + 1;
+        //var item = new String('Item ' + c)
+        $scope.sotRowEditNum = 0;
+        var newTeamMember = {}
+        newTeamMember.soTourTeamID = 0;
+        newTeamMember.soTourID = $scope.observation.soTourID;
+        $scope.observation.soTourTeam.splice(0, 0, newTeamMember);
+    };
+
+    $scope.editTeamMember = function (index) {
+        $scope.sotRowEditNum = index;
+    };
+
+    $scope.openedTourDate = true;
+    $scope.openTourDate = function ($event) {
+        $scope.openedTourDate = true;
+    };
+
+    $scope.$watch("actionItem.targetDate", function () {
+        $scope.openedTourDate = false;
+    })
+
+    $scope.updateSafetyMethodType = function ()
+    {
+        if ($scope.observation.safetyObservation != "") {
+            var selectedObsMethos = JSON.parse($scope.observation.safetyObservation);
+            $scope.observation.safetyObservationTypeID = selectedObsMethos.lupID;
+            $scope.observation.observationType = selectedObsMethos.lupValue;
+        }
+    }
+
+    $scope.cancelTeamMember = function () {
+        if ($scope.observation.soTourTeam[$scope.sotRowEditNum].soTourTeamID<=0)
+            $scope.observation.soTourTeam.splice($scope.sotRowEditNum, 1);
+        $scope.sotRowEditNum = -1;
+        $scope.teamSubmitted = false;
+    };
+
+    $scope.updateMember = function (member) {
+        var selectedPerson = JSON.parse(member.personClass);
+        member.personClassID = selectedPerson.lupID;
+        member.personClassName = selectedPerson.lupValue;
+    }
+
+    $scope.teamSubmitted = false;
+    $scope.saveTeamMember = function (member) {
+        if ($scope.form.soTeamForm.$valid) {
+            $scope.sotRowEditNum = -1;
+        } else {
+            $scope.teamSubmitted = true;
+        }
+    };
+
+    $scope.deleteTeamMember = function (indexNum) {
+        $scope.observation.soTourTeam.splice(indexNum, 1);
+    };
+
+    $scope.onDeleteResult = function (indexNum) {
+        $scope.observation.soTResults.splice(indexNum, 1);
+    };
+
+    $scope.onDeleteAttachment = function (indexNum) {
+        $scope.observation.sotAttachments.splice(indexNum, 1);
+    };
+
+    $scope.onDeleteEditor = function (indexNum) {
+        $scope.observation.sotEditors.splice(indexNum, 1);
+    };
+    $scope.form = {};
+    $scope.submitted = false;
     $scope.SaveData = function () {
+        $scope.observation.soTourID = $scope.id;
+        if ($scope.form.observationForm.$valid) {
+            $http.post(urlBase + "UpdateSOTour", $scope.observation)
+            .success(function (result, status, header, config) {
+                if (result.statusCode) {
+                    $window.location.href = 'GetList';
+                }
+            })
+        } else {
+            $scope.submitted = true;
+        }
 
-        $http.post(urlBase + "UpdateSOTour" , $scope.observation)
-        .success(function (result, status, header, config) {
-            if (result.statusCode) {
-                $window.location.href = 'GetList';
-            }
-        })
+        
     }
 
     $scope.UpdateAnswer = function (questionModel) {
@@ -541,6 +774,20 @@
 
     $scope.CancelData = function () {
         $window.location.href = 'GetList';
+    }
+
+    $scope.UpdateMultipleAnswerNew = function (question)
+    {
+        var questionIDs = [];
+        var displayAns = [];
+        for (i = 0; i <= question.multipleAnswers.length - 1; i++)
+        {
+            var selectedItem = JSON.parse(question.multipleAnswers[i]);
+            questionIDs.push(selectedItem.methodID);
+            displayAns.push(selectedItem.methodName);
+        }
+        question.multipleAnswersIds = questionIDs.join(',');
+        question.displayAnswer = displayAns.join('|| ');
     }
 
     $scope.UpdateMultipleAnswer = function (questionModel, answerModel)
@@ -564,7 +811,6 @@
         questionModel.displayAnswer = multipleAns.join("||");
     }
 
-    $scope.LoadData();
     $scope.enableEdit = false;
     $scope.state = "Click to Edit";
     $scope.toggleView = function () {
@@ -576,5 +822,10 @@
             //$scope.state = "Click to View";
         }
     }
+
+    //$scope.LoadMasterData();
+
+    $scope.LoadData();
+    
 }
 

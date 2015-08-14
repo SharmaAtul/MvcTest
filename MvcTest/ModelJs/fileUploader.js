@@ -4,12 +4,16 @@
 
     this.uploadFileToUrl = function (file) {
         var fd = new FormData();
-        fd.append('file', file);
+        fd.append('description', file.description);
+        fd.append('file', file.file);
+        fd.append('source', file.source);
+        fd.append('sourceID', file.sourceID);
         $http.post(urlBase + 'uploadFileTemp', fd, {
             transformRequest: angular.identity,
             headers: { 'Content-Type': undefined }
         })
-        .success(function () {
+        .success(function (data) {
+            //return data;
         })
         .error(function () {
         });

@@ -11,10 +11,14 @@
     <script src="~/Scripts/jquery-2.1.4.js"></script>
     <script src="~/Scripts/jquery.validate.js"></script>
     <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
-    <script src="~/Scripts/angular.js"></script>
-    <script src="~/Scripts/ui-bootstrap-custom-0.13.2.min.js"></script>
+    <script src="~/Scripts/js/bootstrap.min.js"></script>
+    <link href="~/Scripts/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Scripts/css/bootstrap-theme.min.css" rel="stylesheet" />
+    @*<script src="~/Scripts/angular.js"></script>*@
+    <script src="~/Scripts/angular.min.js"></script>
+    @*<script src="~/Scripts/ui-bootstrap-custom-0.13.2.min.js"></script>*@
     <script src="~/Scripts/ui-bootstrap-custom-tpls-0.13.2.min.js"></script>
-    <link href="~/Scripts/bootstrap.css" rel="stylesheet" />
+    @*<link href="~/Scripts/bootstrap.css" rel="stylesheet" />*@
     <script src="~/ModelJs/Observations.js"></script>
     
     <script src="~/ModelJs/AppConfig.js"></script>
@@ -38,8 +42,22 @@
           @*<small>Subtext for header</small>*@
        </h3>
     </div>
-
+    
     <div class="table-responsive" ng-controller="Observations"> 
+        <div ng-if="observationData" class='modal' id='lpDialog' data-backdrop='static' data-keyboard='false'>
+            <div class='modal-dialog' >
+                <div class='modal-content'>
+                    <div class='modal-header'><b>Processing...</b></div>
+                    <div class='modal-body'>
+                        <div class='progress'>
+                            <div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='100' aria-valuemax='100' style='width:100%'>
+                              Please Wait...
+                            </div>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -57,7 +75,7 @@
                 <tr ng-repeat="obs in observationData">
                     <td><a href="#" ng-click="GetDetail(obs.soTourID);">{{obs.reportNum}}</a></td>
                     <td>{{obs.locationPath}}</td>
-                    <td>{{obs.tourDateTime}}</td>
+                    <td>{{obs.tourDateTime | date: displayFormat}}</td>
                     <td>{{obs.observationType}}</td>
                     <td>{{obs.details}}</td>
                     <td><span style="color:{{ obs.completedColor }}">{{obs.completed}}</span>/
@@ -69,7 +87,7 @@
                     <td>
                         <button type="button" class="btn btn-default" aria-label="Left Align" confirmed-click="onConfirmOK()" 
                             ng-confirm-click="Are you sure to delete?">
-                            <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                         </button>
                     </td>
                 </tr>
