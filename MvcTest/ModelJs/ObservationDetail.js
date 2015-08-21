@@ -530,7 +530,7 @@
         .success(function (result, status, header, config) {
             if (result.statusCode) {
                 $scope.observation = result.data;
-                $scope.observationCopy = angular.copy($scope.observation);
+                angular.copy($scope.observation, $scope.observationCopy);
                 
                 var datePart = $scope.observation.tourDateTime.split('-');
                 $scope.observation.tourDateTime = new Date(parseInt(datePart[2]), parseInt(datePart[0]), parseInt(datePart[1]));
