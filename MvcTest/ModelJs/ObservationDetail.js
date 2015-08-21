@@ -1,4 +1,4 @@
-﻿function ObservationDetail($rootScope, $scope, $http, $location, $window, $modal, fileUpload) {
+﻿function ObservationDetail($rootScope, $scope, $http, $location, $window, $modal, fileUpload, $timeout) {
     
     $scope.observation = {
         "details": "",
@@ -59,117 +59,6 @@
 
     $scope.obsMethods = {data:[]};
 
-    $scope.questionMaster = [
-        {
-            questionID: 13057,
-            data: [
-                        {
-                            methodID: 2485,
-                            methodName: "Test"
-                        },
-                        {
-                            methodID: 2486,
-                            methodName: "Test-2"
-                        },
-                        {
-                            methodID: 2487,
-                            methodName: "Test-3"
-                        }
-            ]
-        },
-        {
-            questionID: 19860,
-            data: [
-                        {
-                            methodID: 12926,
-                            methodName: "Yes"
-                        },
-                        {
-                            methodID: 12927,
-                            methodName: "No"
-                        }
-            ]
-        },
-        {
-            questionID: 10571,
-            data: [
-                        {
-                            methodID: 1176,
-                            methodName: "Yes"
-                        },
-                        {
-                            methodID: 1177,
-                            methodName: "No"
-                        }
-            ]
-        },
-        {
-        questionID: 2799,
-        data: [
-                    {
-                        methodID: 548,
-                        methodName: "Yes"
-                    },
-                    {
-                        methodID: 549,
-                        methodName: "No"
-                    }
-            ]
-        },
-        {
-            questionID: 2800,
-            data: [
-                    {
-                        methodID: 103,
-                        methodName: "USD"
-                    },
-                    {
-                        methodID: 104,
-                        methodName: "INR"
-                    },
-                    {
-                        methodID: 105,
-                        methodName: "EUR"
-                    }
-            ]
-        },
-        {
-            questionID: 19858,
-            data: [
-                    {
-                        methodID: 12923,
-                        methodName: "431"
-                    },
-                    {
-                        methodID: 12924,
-                        methodName: "432"
-                    },
-                    {
-                        methodID: 12925,
-                        methodName: "433"
-                    }
-            ]
-        },
-        {
-            questionID: 2801,
-            data: [
-                    {
-                        methodID: 5,
-                        methodName: "KWh"
-                    },
-                    {
-                        methodID: 6,
-                        methodName: "MWh"
-                    },
-                    {
-                        methodID: 7,
-                        methodName: "Joule"
-                    }
-            ]
-        }
-
-    ];
-
     $scope.locationLevelData = { locationLevels : [ ] }
 
     $scope.personClasses = []
@@ -179,54 +68,25 @@
     $scope.animationsEnabled = true;
     //$scope.currentTpl = "";
 
-    $scope.open = function ($event) {
-        $scope.openedTargetDt = true;
-    };
-
-    $scope.$watch("observation.tourDateTime", function () {
-        $scope.openedCompletedDt = false;
-    })
-
     $scope.displayFormat = 'MM-dd-yyyy';
     $scope.parserFormat = 'MM-dd-yyyy';
 
-    
-
-    $scope.obsCategories = [
-        {
-            lupID: 1,
-            lupValue: "Category-1",
-            obsSubCategories : [
-                {
-                    lupID: 1,
-                    lupValue: "Sub-Category-1"
-                },
-                {
-                    lupID: 2,
-                    lupValue: "Sub-Category-2"
-                },
-            ]
-        }
-    ]
-
-    $scope.obsClasses = [
-        {
-            lupID: 1,
-            lupValue: "ObsClass-1"
-        },{
-            lupID: 2,
-            lupValue: "ObsClass-2"
-        }
-    ]
 
     $scope.editObservationResult = function (size,soTourID, soTourResultID, obsNum, indexNum) {
         var data = {};
         data.soTourID = soTourID;
         data.soTourResultID = soTourResultID;
+        var safetyObsTypeData = {};
 
-        var safetyObsTypeData = $scope.observation.safetyObservation; //JSON.search($scope.obsMethods, '//*[lupID="' + $scope.observation.safetyObservationTypeID + '"]')[0];
+        if (angular.isUndefined($scope.observation.safetyObservation)) {
+            var arrResult = $($scope.obsMethods).filter(function (i, n) { return n.lupID === $scope.observation.safetyObservationTypeID });
+            safetyObsTypeData = arrResult[0];
+        } else
+            safetyObsTypeData = JSON.parse($scope.observation.safetyObservation);
+
         data.obsClasses = safetyObsTypeData.soClass;
         data.obsCategories = safetyObsTypeData.categories;
+        data.soTourResultDynamicQuestions = $scope.soTourResultDynamicQuestions;
         data.type = "ObsResult";
 
         data.modalTitle = "Edit Observation Result (" + obsNum + ")";
@@ -252,10 +112,16 @@
         var data = {};
         data.soTourID = $scope.observation.soTourID;
         data.soTourResultID = 0;
-        data.obsNum = $scope.observation.reportNum +"_R"+ ($scope.observation.soTResults.length+1).toString();
-        var safetyObsTypeData = $scope.observation.safetyObservation;//JSON.search($scope.obsMethods, '//*[lupID="' + $scope.observation.safetyObservationTypeID + '"]')[0];
+        data.obsNum = $scope.observation.reportNum + "_R" + ($scope.observation.soTResults.length + 1).toString();
+
+        if (angular.isUndefined($scope.observation.safetyObservation)) {
+            var arrResult = $($scope.obsMethods).filter(function (i, n) { return n.lupID === $scope.observation.safetyObservationTypeID });
+            safetyObsTypeData = arrResult[0];
+        } else
+            safetyObsTypeData = JSON.parse($scope.observation.safetyObservation);
         data.obsClasses = safetyObsTypeData.soClass;
         data.obsCategories = safetyObsTypeData.categories;
+        data.soTourResultDynamicQuestions = $scope.soTourResultDynamicQuestions;
         data.type = "ObsResult";
 
         data.modalTitle = "Add Observation Result";
@@ -284,9 +150,16 @@
         data.soTourID = $scope.observation.soTourID;
         data.soTourResultID = 0;
         data.obsNum = $scope.observation.reportNum + "_R" + ($scope.observation.soTResults.length + 1).toString();
-        var safetyObsTypeData = $scope.observation.safetyObservation; //JSON.search($scope.obsMethods, '//*[lupID="' + $scope.observation.safetyObservationTypeID + '"]')[0];
+
+        if (angular.isUndefined($scope.observation.safetyObservation)) {
+            var arrResult = $($scope.obsMethods).filter(function (i, n) { return n.lupID === $scope.observation.safetyObservationTypeID });
+            safetyObsTypeData = arrResult[0];
+        } else
+            safetyObsTypeData = JSON.parse($scope.observation.safetyObservation);
+
         data.obsClasses = safetyObsTypeData.soClass;
         data.obsCategories = safetyObsTypeData.categories;
+        data.soTourResultDynamicQuestions = $scope.soTourResultDynamicQuestions;
         data.type = "ObsResult";
 
         data.modalTitle = "Add Observation Result";
@@ -568,16 +441,26 @@
         fileUpload.uploadFileToUrl(file);
     }
 
-    $scope.updateLocations = function updateLocations(levelNo, locationId)
+    $scope.updateLocations = function updateLocations(levelNo, location)
     {
-        $scope.locationLevelData.locationLevels[levelNo].parentLocId = locationId;
-        $scope.observation.locationID = locationId;
+        $scope.locationLevelData.locationLevels[levelNo].parentLocId = location.dLocationID;
+        $scope.locationLevelData.locationLevels[levelNo - 1].locId = location.dLocationID;
+        $scope.observation.locationID = location.dLocationID;
 
-        for (var index = levelNo+1; index <= $scope.locationLevelData.locationLevels.length; index++)
+        for (var index = levelNo+1; index < $scope.locationLevelData.locationLevels.length; index++)
         {
             $scope.locationLevelData.locationLevels[index].parentLocId = 0;
             $scope.locationLevelData.locationLevels[index - 1].locId = 0;
         }
+
+        //var locationPath = [];
+        //for (var index = 0; index < $scope.locationLevelData.locationLevels.length; index++) {
+        //    var locationName = $scope.locationLevelData.locationLevels[index].locationName;
+        //    if (locationName != "")
+        //        locationPath.push(locationName);
+        //}
+
+        //$scope.observation.location = locationPath.join(' > ');
     }
 
     $scope.getCompletedColor = function (val) {
@@ -615,13 +498,15 @@
                 $scope.obsMethods = result.data.safetyObservationType;
                 $scope.recommendationLevels = result.data.recommendationLevelModels;
                 $scope.currencies = result.data.currencies;
+                $scope.soTourDynamicQuestions = result.data.soTourDynamicQuestions;
+                $scope.soTourResultDynamicQuestions = result.data.soTourResultDynamicQuestions;
+                $scope.unitGroupTypes = result.data.unitGroupTypes;
             }
         })
     }
 
     if ($window.sessionStorage.masterData == null || angular.isUndefined($window.sessionStorage.masterData) || $window.sessionStorage.masterData == "{}") {
         $scope.LoadMasterData();
-        //$window.sessionStorage.masterData = JSON.stringify($scope.data);
     }
     else {
         var data = JSON.parse($window.sessionStorage.masterData);
@@ -632,7 +517,12 @@
         $scope.obsMethods = data.safetyObservationType;
         $scope.recommendationLevels = data.recommendationLevelModels;
         $scope.currencies = data.currencies;
+        $scope.soTourDynamicQuestions = data.soTourDynamicQuestions;
+        $scope.soTourResultDynamicQuestions = data.soTourResultDynamicQuestions;
+        $scope.unitGroupTypes = data.unitGroupTypes;
     }
+
+    $scope.observationCopy = {};
 
     $scope.LoadData = function () {
         
@@ -640,7 +530,8 @@
         .success(function (result, status, header, config) {
             if (result.statusCode) {
                 $scope.observation = result.data;
-                //$scope.observation.locationID = 122;
+                $scope.observationCopy = angular.copy($scope.observation);
+                
                 var datePart = $scope.observation.tourDateTime.split('-');
                 $scope.observation.tourDateTime = new Date(parseInt(datePart[2]), parseInt(datePart[0]), parseInt(datePart[1]));
                 for (var i = 0; i < $scope.observation.soTResults.length; i++) {
@@ -651,31 +542,50 @@
                 }
 
                 var locData = [];
+                var arrResult = $($scope.locationData.locations).filter(function (i, n) { return n.dLocationID === $scope.observation.locationID });
+                if (arrResult.length > 0) {
+                    var currLoc = arrResult[0];
+                    while (true) {
+                        locData.push(currLoc);
+                        if (currLoc.parentLocId == 0)
+                            break;
 
-                var currLoc = JSON.search($scope.locationData, '//*[dLocationID="' + $scope.observation.locationID + '"]')[0];
-                while (true)
-                {
-                    if (!currLoc)
-                        break;
+                        arrResult = $($scope.locationData.locations).filter(function (i, n) { return n.dLocationID === currLoc.parentDLocationID });  //$scope.getLocation(currLoc.parentLocId);
 
-                    locData.push(currLoc.dLocationID);
-                    //alert(currLoc.locationId);
-                    if (currLoc.parentLocId == 0)
-                        break;
-                    currLoc = JSON.search($scope.locationData, '//*[dLocationID="' + currLoc.parentDLocationID + '"]')[0]; //$scope.getLocation(currLoc.parentLocId);
+                        if (arrResult.length > 0) {
+                            currLoc = arrResult[0];
+                        } else {
+                            break;
+                        }
+                    }
+
+                    var locData = locData.reverse();
+                    $scope.locationLevelData.locationLevels[0].locId = locData[0].dLocationID;
+                    $scope.locationLevelData.locationLevels[0].locationName = locData[0].locationName;
+                    var index = 1;
+                    for (; index < locData.length; index++) {
+                        $scope.locationLevelData.locationLevels[index].parentLocId = locData[index - 1].dLocationID;
+                        $scope.locationLevelData.locationLevels[index].locId = locData[index].dLocationID;
+                        $scope.locationLevelData.locationLevels[index].locationName = locData[index].locationName;
+                    }
+
+                    for (; index < $scope.locationLevelData.locationLevels.length; index++)
+                    {
+                        $scope.locationLevelData.locationLevels[index].parentLocId = $scope.locationLevelData.locationLevels[index-1].locId;
+                        $scope.locationLevelData.locationLevels[index].locId = -1;
+                        $scope.locationLevelData.locationLevels[index].locationName="";
+                    }
+
+                    //var locationPath = [];
+                    //for(index=0; index < $scope.locationLevelData.locationLevels.length; index++)
+                    //{
+                    //    var locationName = $scope.locationLevelData.locationLevels[index];
+                    //    if(locationName!="")
+                    //        locationPath.push(locationName);
+                    //}
+
+                    //$scope.observation.location = locationPath.join(' > ');
                 }
-
-                //alert(locData.length);
-                var locData = locData.reverse();
-                $scope.locationLevelData.locationLevels[0].locId = locData[0];
-                for (var index = 1; index < locData.length; index++)
-                {
-                    //alert(locData[index-1]);
-                    $scope.locationLevelData.locationLevels[index].parentLocId = locData[index - 1];
-                    $scope.locationLevelData.locationLevels[index].locId = locData[index];
-                }
-                
-                //$rootScope.loading = false;
             }
         })
     }
@@ -694,22 +604,45 @@
     $scope.editTeamMember = function (index) {
         $scope.sotRowEditNum = index;
     };
-
-    $scope.openedTourDate = true;
+    $scope.datepicker = {};
     $scope.openTourDate = function ($event) {
-        $scope.openedTourDate = true;
+        $scope.datepicker.openedTourDate = true;
     };
 
-    $scope.$watch("actionItem.targetDate", function () {
-        $scope.openedTourDate = false;
+    $scope.$watch("observation.tourDateTime", function () {
+        $scope.datepicker.openedTourDate = false;
     })
 
     $scope.updateSafetyMethodType = function ()
     {
-        if ($scope.observation.safetyObservation != "") {
-            var selectedObsMethos = JSON.parse($scope.observation.safetyObservation);
-            $scope.observation.safetyObservationTypeID = selectedObsMethos.lupID;
-            $scope.observation.observationType = selectedObsMethos.lupValue;
+        var arrResult = $($scope.obsMethods).filter(function (i, n) { return n.lupID.toString() === $scope.observation.safetyObservationTypeID });
+        if (arrResult.length > 0) {
+            var safetyObsTypeData = arrResult[0];
+
+            $scope.observation.observationType = safetyObsTypeData.lupValue;
+            $scope.observation.sotMethodDynamicQs = [];
+
+            for (var index = 0; index < safetyObsTypeData.soTypeQuestions.length; index++)
+            {
+                var question = safetyObsTypeData.soTypeQuestions[index];
+                if (question.isActive)
+                {
+                    var dynQuestion = {
+                        answer: "",
+                        answerId: -1,
+                        displayAnswer: "",
+                        isRequired: false,
+                        multipleAnswersIds: "",
+                        question: question.question,
+                        questionID: question.questionID,
+                        questionType: question.questionType,
+                        repeatQuestionID: 0,
+                        unitGroupID: question.unitGroupID
+                    }
+
+                    $scope.observation.sotMethodDynamicQs.push(dynQuestion);
+                }
+            }
         }
     }
 
@@ -721,9 +654,10 @@
     };
 
     $scope.updateMember = function (member) {
-        var selectedPerson = JSON.parse(member.personClass);
-        member.personClassID = selectedPerson.lupID;
-        member.personClassName = selectedPerson.lupValue;
+        var arrResult = $($scope.personClasses).filter(function (i, n) { return n.lupID === member.personClassID });
+        if (arrResult.length > 0) {
+            member.personClassName = arrResult[0].lupValue;
+        }
     }
 
     $scope.teamSubmitted = false;
@@ -750,6 +684,7 @@
     $scope.onDeleteEditor = function (indexNum) {
         $scope.observation.sotEditors.splice(indexNum, 1);
     };
+
     $scope.form = {};
     $scope.submitted = false;
     $scope.SaveData = function () {
@@ -764,13 +699,16 @@
         } else {
             $scope.submitted = true;
         }
-
-        
     }
 
     $scope.UpdateAnswer = function (questionModel) {
         questionModel.answer = questionModel.displayAnswer;
     }
+
+    $scope.UpdateDisplayAnswer = function (questionModel) {
+        questionModel.displayAnswer = questionModel.answer;
+    }
+    
 
     $scope.CancelData = function () {
         $window.location.href = 'GetList';
@@ -783,32 +721,11 @@
         for (i = 0; i <= question.multipleAnswers.length - 1; i++)
         {
             var selectedItem = JSON.parse(question.multipleAnswers[i]);
-            questionIDs.push(selectedItem.methodID);
-            displayAns.push(selectedItem.methodName);
+            questionIDs.push(selectedItem.questionLupAnswerId);
+            displayAns.push(selectedItem.answer);
         }
         question.multipleAnswersIds = questionIDs.join(',');
         question.displayAnswer = displayAns.join('|| ');
-    }
-
-    $scope.UpdateMultipleAnswer = function (questionModel, answerModel)
-    {
-        var multipleAnsIDs = questionModel.multipleAnswersIds.split(',');
-        var multipleAns = questionModel.displayAnswer.replace('||', ',').split(',');
-
-        var idx = $.inArray(answerModel.methodID.toString(), multipleAnsIDs);
-        // is currently selected
-        if (idx > -1) {
-            multipleAnsIDs.splice(idx, 1);
-            multipleAns.splice(idx, 1);
-        }
-            // is newly selected
-        else {
-            multipleAnsIDs.push(answerModel.methodID);
-            multipleAns.push(answerModel.methodName);
-        }
-
-        questionModel.multipleAnswersIds = multipleAnsIDs.join(",");
-        questionModel.displayAnswer = multipleAns.join("||");
     }
 
     $scope.enableEdit = false;
@@ -816,14 +733,71 @@
     $scope.toggleView = function () {
         if ($scope.enableEdit) {
             $scope.enableEdit = false;
-            //$scope.state = "Click to Edit";
+            
         } else {
             $scope.enableEdit = true;
-            //$scope.state = "Click to View";
         }
     }
 
-    //$scope.LoadMasterData();
+    $scope.undoChanges = function () {
+
+        $scope.enableEdit = false;
+
+        $scope.observation.locationID = $scope.observationCopy.locationID;
+        $scope.observation.location = $scope.observationCopy.location;
+        $scope.observation.tourDateTime = $scope.observationCopy.tourDateTime;
+        $scope.observation.safetyObservationTypeID = $scope.observationCopy.safetyObservationTypeID;
+        $scope.observation.observationType = $scope.observationCopy.observationType;
+        $scope.observation.sotDynamicQs = $scope.observationCopy.sotDynamicQs;
+        $scope.observation.sotMethodDynamicQs = $scope.observationCopy.sotMethodDynamicQs;
+        $scope.observation.soTourTeam = $scope.observationCopy.soTourTeam;
+        $scope.observation.description = $scope.observationCopy.description;
+        $scope.observation.details = $scope.observationCopy.details;
+
+        var locData = [];
+        var arrResult = $($scope.locationData.locations).filter(function (i, n) { return n.dLocationID === $scope.observation.locationID });
+        if (arrResult.length > 0) {
+            var currLoc = arrResult[0];
+            while (true) {
+                locData.push(currLoc);
+                if (currLoc.parentLocId == 0)
+                    break;
+
+                arrResult = $($scope.locationData.locations).filter(function (i, n) { return n.dLocationID === currLoc.parentDLocationID });  //$scope.getLocation(currLoc.parentLocId);
+
+                if (arrResult.length > 0) {
+                    currLoc = arrResult[0];
+                } else {
+                    break;
+                }
+            }
+
+            var locData = locData.reverse();
+            $scope.locationLevelData.locationLevels[0].locId = locData[0].dLocationID;
+            $scope.locationLevelData.locationLevels[0].locationName = locData[0].locationName;
+            var index = 1;
+            for (; index < locData.length; index++) {
+                $scope.locationLevelData.locationLevels[index].parentLocId = locData[index - 1].dLocationID;
+                $scope.locationLevelData.locationLevels[index].locId = locData[index].dLocationID;
+                $scope.locationLevelData.locationLevels[index].locationName = locData[index].locationName;
+            }
+
+            for (; index < $scope.locationLevelData.locationLevels.length; index++) {
+                $scope.locationLevelData.locationLevels[index].parentLocId = $scope.locationLevelData.locationLevels[index - 1].locId;
+                $scope.locationLevelData.locationLevels[index].locId = -1;
+                $scope.locationLevelData.locationLevels[index].locationName = "";
+            }
+
+            //var locationPath = [];
+            //for (index = 0; index < $scope.locationLevelData.locationLevels.length; index++) {
+            //    var locationName = $scope.locationLevelData.locationLevels[index];
+            //    if (locationName != "")
+            //        locationPath.push(locationName);
+            //}
+
+            //$scope.observation.location = locationPath.join(' > ');
+        }
+    }
 
     $scope.LoadData();
     

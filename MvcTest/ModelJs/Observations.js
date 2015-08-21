@@ -38,7 +38,7 @@
     $scope.data = {};
 
     $scope.LoadMasterData = function () {
-        $http.get(urlBase + "getObservationMasterData")
+        $http.get(urlBase + "getMasterData/abc")
         .success(function (result, status, header, config) {
             if (result.statusCode) {
                 $scope.data.locationModels = result.data.locationModels;
@@ -47,13 +47,9 @@
                 $scope.data.safetyObservationType = result.data.safetyObservationType;
                 $scope.data.recommendationLevelModels = result.data.recommendationLevelModels;
                 $scope.data.currencies = result.data.currencies;
-
-                //$scope.data.locationModels = data.locationModels;
-                //$scope.data.locationLevelModel = data.locationLevelModel;
-                //$scope.data.personClassModels = data.personClassModels;
-                //$scope.data.safetyObservationType = data.safetyObservationType;
-                //$scope.data.recommendationLevelModels = data.recommendationLevelModels;
-                //$scope.data.currencies = data.currencies;
+                $scope.data.soTourDynamicQuestions = result.data.soTourDynamicQuestions;
+                $scope.data.soTourResultDynamicQuestions = result.data.soTourResultDynamicQuestions;
+                $scope.data.unitGroupTypes = result.data.unitGroupTypes;
             }
         })
     }
@@ -121,6 +117,9 @@
         $scope.data.safetyObservationType = data.safetyObservationType;
         $scope.data.recommendationLevelModels = data.recommendationLevelModels;
         $scope.data.currencies = data.currencies;
+        $scope.data.soTourDynamicQuestions = data.soTourDynamicQuestions;
+        $scope.data.soTourResultDynamicQuestions = data.soTourResultDynamicQuestions;
+        $scope.data.unitGroupTypes = data.unitGroupTypes;
     }
 
     $scope.LoadData();

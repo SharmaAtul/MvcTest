@@ -38,8 +38,8 @@
             //responseHTML = '<span ng-repeat ="n in selectedItem track by $index | "';
             responseHTML = '<select class="form-control"><option value="0" ng-click="updateLocations(locationLevel.dLocationLevelNo,0)">-Select-</option><option'
             responseHTML += ' ng-selected="location.dLocationID == locationLevel.locId"'
-            responseHTML += ' ng-click="updateLocations(locationLevel.dLocationLevelNo,location.dLocationID)"'
-            responseHTML += ' ng-repeat="location in locationData.locations | filter : {levelNo : locationLevel.dLocationLevelNo} | filter : { parentDLocationID : locationLevel.parentLocId }" value="{{location.dLocationID}}"'
+            responseHTML += ' ng-click="updateLocations(locationLevel.dLocationLevelNo,location)"'
+            responseHTML += ' ng-repeat="location in locationData.locations | filter : {levelNo : locationLevel.dLocationLevelNo, parentDLocationID : locationLevel.parentLocId }" value="location"'
             responseHTML += '>{{location.locationName}}'
             responseHTML += '</option></select>'
             //responseHTML += '</td></tr>'

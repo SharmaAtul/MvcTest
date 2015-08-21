@@ -20,22 +20,6 @@
         }
     ]
 
-    $scope.questionMaster = [
-        {
-            questionID: 19860,
-            data: [
-                        {
-                            methodID: 12926,
-                            methodName: "Yes"
-                        },
-                        {
-                            methodID: 12927,
-                            methodName: "No"
-                        }
-            ]
-        }
-    ];
-
     $scope.UpdateMultipleAnswer = function (questionModel, answerModel) {
         var multipleAnsIDs = questionModel.multipleAnswersIds.split(',');
         var multipleAns = questionModel.displayAnswer.replace('||', ',').split(',');
@@ -122,20 +106,33 @@
             if (datePart.length > 2)
                 $scope.actionItem.verifiedDate = new Date(parseInt(datePart[2]), parseInt(datePart[0]), parseInt(datePart[1]));
 
-            if ($scope.actionItem.recommendationLevelID>0)
-                $scope.actionItem.recommendationLevel = JSON.search($scope.recommendationLevels, '//*[lupID="' + $scope.actionItem.recommendationLevelID + '"]')[0].lupValue;
-
+            if ($scope.actionItem.recommendationLevelID > 0) {
+                var arrResult = $($scope.recommendationLevels).filter(function (i, n) { return n.lupID === $scope.actionItem.recommendationLevelID });
+                if(arrResult.length>0){
+                    $scope.actionItem.recommendationLevel = arrResult[0].lupValue
+                }
+            }
             $scope.enableEdit = false;
         }
 
         $scope.$watch("actionItem.priority", function () {
             if (!angular.isUndefined($scope.actionItem.priority))
-                $scope.actionItem.priorityName = JSON.search($scope.priorityList, '//*[lupID="' + $scope.actionItem.priority + '"]')[0].priorityName;
+            {
+                var arrResult = $($scope.priorityList).filter(function (i, n) { return n.lupID === $scope.actionItem.priority });
+                if (arrResult.length > 0) {
+                    $scope.actionItem.priorityName = arrResult[0].lupValue
+                }
+            }
         });
 
         $scope.$watch("actionItem.recommendationLevelID", function () {
             if (!angular.isUndefined($scope.actionItem.recommendationLevelID))
-                $scope.actionItem.recommendationLevel = JSON.search($scope.recommendationLevels, '//*[lupID="' + $scope.actionItem.recommendationLevelID + '"]')[0].lupValue;
+            {
+                var arrResult = $($scope.recommendationLevels).filter(function (i, n) { return n.lupID === $scope.actionItem.recommendationLevelID });
+                if (arrResult.length > 0) {
+                    $scope.actionItem.recommendationLevel = arrResult[0].lupValue
+                }
+            }
         });
 
         $scope.openTargetDate = function ($event) {
@@ -168,6 +165,7 @@
         
         $scope.obsCategories = items.obsCategories;
         $scope.obsClasses = items.obsClasses;
+        $scope.soTourResultDynamicQuestions = items.soTourResultDynamicQuestions;
         $scope.enableEdit = true;
 
         $scope.updateCategory = function (categoryDC2)
