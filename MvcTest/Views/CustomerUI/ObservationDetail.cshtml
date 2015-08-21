@@ -551,7 +551,7 @@
         <form class="form-horizontal" name="form.observationForm" novalidate >
             <div class="form-group">
                 </div>
-            <div class="form-group">
+            <div class="form-group" ng-show="isNotNew">
                 <label class="control-label col-xs-2">Report Number</label>
                 <div class="col-xs-10">
                     <p class="form-control-static">{{observation.reportNum}}</p>
@@ -580,7 +580,6 @@
                     <select ng-show="enableEdit" ng-change="updateSafetyMethodType()" class="form-control"
                         ng-class="{true: 'errorField'}[submitted && form.observationForm.safetyObservation.$invalid]" 
                         name="safetyObservation" ng-model="observation.safetyObservationTypeID" required>
-                        <option value="">-Select-</option>
                         <option ng-repeat="method in obsMethods" value="{{method.lupID}}" ng-selected="method.lupID==observation.safetyObservationTypeID">{{method.lupValue}}</option>
                     </select>
                     <span class="errorMessage" ng-show="form.observationForm.safetyObservation.$dirty && form.observationForm.safetyObservation.$invalid && submitted && form.observationForm.safetyObservation.$error.required" >Observation Method is required</span>
@@ -709,9 +708,9 @@
                 <label class="control-label col-xs-2"></label>
                 <div class="col-xs-10">
                     <button class="btn btn-primary" ng-show="enableEdit" type="submit" value="Save" ng-click="SaveData()"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Save</button>
-                    <button class="btn btn-link" ng-show="enableEdit" type="button" value="Cancel" undo-changes="undoChanges()" cancel-update>back to View</button>
+                    <button class="btn btn-link" ng-show="enableEdit && isNotNew" type="button" value="Cancel" undo-changes="undoChanges()" cancel-update>back to View</button>
                     <button class="btn btn-info" ng-hide="enableEdit" type="button" value="Edit" ng-click="toggleView()"><span class="glyphicon glyphicon-edit"></span>&nbsp;Edit</button>
-                    <button class="btn btn-link" ng-hide="enableEdit" type="button" value="Cancel" ng-click="CancelData()" >cancel</button>
+                    <button class="btn btn-link" ng-hide="enableEdit && isNotNew" type="button" value="Cancel" ng-click="CancelData()" >cancel</button>
                 </div>
                 @*<input ng-hide="enableEdit" type="button" value="Edit" ng-click="toggleView()"/>
                 <input ng-hide="enableEdit" type="button" value="Cancel" ng-click="CancelData()"/>
@@ -720,14 +719,14 @@
             </div>
             <div class="form-group"></div>
         </form>
-                 <tabset style="z-index:100">   
+                 <tabset style="z-index:100" ng-show="isNotNew">   
                      <tab>
                         <tab-heading>Observations/Results</tab-heading>
                          <br />
                             <div class="row">
                                 <div ng-show="enableEdit" class="form-group">
                                     <div class="col-xs-3">
-                                        <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="addResult('lg')">
+                                        <button type="button" class="btn btn-info" aria-label="Left Align" ng-click="addResult('lg')">
                                             <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Result
                                         </button>&nbsp;
                                     @*</div>
@@ -736,7 +735,7 @@
                             <div class="row">
                                 <div ng-show="enableEdit" class="form-group">
                                     <div class="col-xs-3">*@
-                                        <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="addObservationResult('lg')">
+                                        <button type="button" class="btn btn-info" aria-label="Left Align" ng-click="addObservationResult('lg')">
                                             <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Observation Result
                                         </button>
                                     </div>
@@ -784,7 +783,7 @@
                             <div class="row">
                                 <div ng-show="enableEdit" class="form-group">
                                     <div class="col-xs-3">
-                                        <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="addAttachment()">
+                                        <button type="button" class="btn btn-info" aria-label="Left Align" ng-click="addAttachment()">
                                             <span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> Add Attachments
                                         </button>
                                     </div>
@@ -826,7 +825,7 @@
                             <div class="row">
                                 <div ng-show="enableEdit" class="form-group">
                                     <div class="col-xs-3">
-                                        <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="addEditors()">
+                                        <button type="button" class="btn btn-info" aria-label="Left Align" ng-click="addEditors()">
                                             <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Editors
                                         </button>
                                     </div>
@@ -861,11 +860,11 @@
                         </tab>
                     </tabset>
             </tab>
-            <tab>
+            <tab ng-show="isNotNew">
                 <tab-heading>Action Items</tab-heading>
                 <div class="table-responsive">
                     <br />
-                    <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="addActionItem('lg')">
+                    <button type="button" class="btn btn-info" aria-label="Left Align" ng-click="addActionItem('lg')">
                         <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Add Action Item
                     </button>
                     <table class="table table-striped">
