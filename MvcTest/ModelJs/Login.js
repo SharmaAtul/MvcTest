@@ -54,6 +54,9 @@
     //$window.sessionStorage.masterData = null;
     $scope.Login = function () {
         $http.post(urlBase + 'authenticateUser', $scope.UserLogin)
+            //.then(function () {
+            //    $scope.LoadMasterData();
+            //})
             .success(function (data, status, header, config) {
                 if (data.statusCode == true) {
                     if (data.data.prodUrl != "") {
@@ -71,10 +74,8 @@
 
                         if ($scope.remember)
                             rememberMe('clientID', 0);
-                        
+
                         $scope.LoadMasterData();
-                        // change the path
-                        $window.location.href = '../CustomerUI/GetList';
                     }
                 }
                 else {
@@ -90,6 +91,7 @@
         $http.get(urlBase + "getMasterData/abc")
         .success(function (result, status, header, config) {
             if (result.statusCode) {
+
                 $scope.data.locationModels = result.data.locationModels;
                 $scope.data.locationLevelModel = result.data.locationLevelModel;
                 $scope.data.personClassModels = result.data.personClassModels;
@@ -101,6 +103,8 @@
                 $scope.data.unitGroupTypes = result.data.unitGroupTypes;
 
                 $window.sessionStorage.masterData = JSON.stringify($scope.data);
+
+                $window.location.href = '../CustomerUI/GetList';
             }
         })
     }

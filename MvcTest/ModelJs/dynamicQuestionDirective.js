@@ -10,10 +10,9 @@
             var responseHTML = "";
             if (attributes.questionType == 'MultipleSelectionBox') {
 
-                responseHTML += '<select class="form-control form-control-small" size="3" ng-show="enableEdit" ng-multiple="true" ng-model="question.multipleAnswers" ng-blur="UpdateMultipleAnswerNew(question)" multiple>';
-                responseHTML += '<option ng-click="UpdateMultipleAnswer(question, data)"';
-                responseHTML += ' ng-selected="question.multipleAnswersIds.indexOf(data.questionLupAnswerId) > -1"';
-                responseHTML += ' ng-repeat="data in dynamicQuestion.questionsAnswers" value="{{data.questionLupAnswerId}}"';
+                responseHTML += '<select class="form-control form-control-small" size="3" ng-show="enableEdit" ng-multiple="true" ng-model="question.multipleAnswers" ng-change="UpdateMultipleAnswerNew(question)" multiple>';
+                responseHTML += '<option ng-selected="question.multipleAnswersIds.indexOf(data.questionLupAnswerId) > -1"';
+                responseHTML += ' ng-repeat="data in dynamicQuestion.questionsAnswers" value="{{data}}"';
                 responseHTML += '>{{data.answer}}';
                 responseHTML += '</option>';
                 responseHTML += '</select>';
@@ -30,7 +29,7 @@
             else if (attributes.questionType == 'DecisionSelectionBox') {
                 //for multi check box
                 responseHTML += '<select class="form-control form-control-small" ng-show="enableEdit">';
-                responseHTML += '<option ng-click="UpdateMultipleAnswer(question, data)"';
+                responseHTML += '<option ng-click="updateAnswerId(question, data)"';
                 responseHTML += ' ng-selected="question.answerId.indexOf(data.questionLupAnswerId) > -1"';
                 responseHTML += ' ng-repeat="data in dynamicQuestion.questionsAnswers" value="{{data.questionLupAnswerId}}"';
                 responseHTML += '>{{data.answer}}';
@@ -52,7 +51,7 @@
                 //for multi check box
 
                 responseHTML += '<select class="form-control form-control-small" ng-show="enableEdit">';
-                responseHTML += '<option ng-click="UpdateMultipleAnswer(question, data)"';
+                responseHTML += '<option ng-click="updateAnswerId(question, data)"';
                 responseHTML += ' ng-selected="question.answerId.indexOf(data.questionLupAnswerId) > -1"';
                 responseHTML += ' ng-repeat="data in dynamicQuestion.questionsAnswers" value="{{data.questionLupAnswerId}}"';
                 responseHTML += '>{{data.answer}}';
@@ -75,7 +74,7 @@
                 responseHTML += '<span ng-repeat="data in dynamicQuestion.questionsAnswers" ng-show="enableEdit">'
                 responseHTML += '<div class="checkbox"><label><input type="radio" ng-model = "question.answerId" name="question.questionID"'
                 responseHTML += 'ng-checked="question.answerId==data.questionLupAnswerId"'
-                responseHTML += 'ng-click="UpdateMultipleAnswer(question, data)"';
+                responseHTML += 'ng-click="updateAnswerId(question, data)"';
                 responseHTML += 'value="{{data.questionLupAnswerId}}"/> {{data.answer}}</label></div>';
                 responseHTML += '</span>';
 
@@ -93,8 +92,7 @@
 
                 responseHTML += '<input class="form-control form-control-x-small" ng-show="enableEdit" type="text" ng-model="question.answer" ng-blur="UpdateDisplayAnswer(question)"/>';
                 responseHTML += '<select class="form-control form-control-small" ng-model="question.answerId" ng-show="enableEdit">';
-                responseHTML += '<option ng-click="UpdateMultipleAnswer(question, data)"';
-                responseHTML += ' ng-selected="question.answerId==data.unitID"';
+                responseHTML += '<option ng-selected="question.answerId==data.unitID"';
                 responseHTML += ' ng-repeat="data in currencies" value="{{data.unitID}}"';
                 responseHTML += '>{{data.unitName}}';
                 responseHTML += '</option>';
