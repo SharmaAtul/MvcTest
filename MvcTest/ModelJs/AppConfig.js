@@ -1,32 +1,66 @@
 ﻿
 
-function authInterceptor($rootScope, $q, $window) {
-    //var pleaseWaitDiv = $(" Please Wait <!– –> Processing );
+function authInterceptor($rootScope,$window) {
+
+    // Active request count
+    var requestCount = 0;
+
+    function startRequest(config) {
+        // If no request ongoing, then broadcast start event
+        if (!requestCount) {
+            $rootScope.$broadcast('httpLoaderStart');
+        }
+        config.headers = config.headers || {};
+
+        if ($window.sessionStorage.token) {
+            config.headers.Auth_Token = $window.sessionStorage.token;
+        }
+
+        requestCount++;
+        return config;
+    }
+
+    function endRequest(arg) {
+        // No request ongoing, so make sure we don’t go to negative count
+        if (!requestCount)
+            return;
+
+        requestCount--;
+        // If it was last ongoing request, broadcast event
+        if (!requestCount) {
+            $rootScope.$broadcast('httpLoaderEnd');
+        }
+
+        return arg;
+    }
+
+    // Return interceptor configuration object
     return {
-        request: function (config) {
-            $rootScope.loading = true;
-            config.headers = config.headers || {};
-            if ($window.sessionStorage.token) {
-                config.headers.Auth_Token = $window.sessionStorage.token;
+        'request': startRequest,
+        'requestError': endRequest,
+        'response': endRequest,
+        'responseError': endRequest
+    };
+}
+
+function httpLoader() {
+    return {
+        restrict: 'A',
+        link: function (scope, element) {
+            // Store original display mode of element
+            var shownType = element.css('display');
+            function hideElement() {
+                element.css('display', 'none');
             }
-            return config;
-        },
-        requestError: function (rejection) {
-            $rootScope.loading = false;
-            //$log.error('Request error:', rejection);
-            return $q.reject(rejection);
-        },
-        response: function (response) {
-            $rootScope.loading = false;
-            if (response.status === 401) {
-                // handle the case where the user is not authenticated
-            }
-            return response || $q.when(response);
-        },
-        responseError: function (rejection) {
-            $rootScope.loading = false;
-            //$log.error('Response error:', rejection);
-            return $q.reject(rejection);
+
+            scope.$on('httpLoaderStart', function () {
+                element.css('display', shownType);
+            });
+
+            scope.$on('httpLoaderEnd', hideElement);
+
+            // Initially hidden
+            hideElement();
         }
     };
 }

@@ -23,52 +23,92 @@
     <script src="~/ModelJs/AppConfig.js"></script>
     <link href="~/Scripts/custom.css" rel="stylesheet" />
     
+   @* <script src="~/Jasmine/jasmine.js"></script>
+    <script src="~/Jasmine/jasmine-html.js"></script>
+    <script src="~/Jasmine/boot.js"></script>
+    <script src="~/Jasmine/console.js"></script>
+    <script src="~/Scripts/angular-mocks.js"></script>
+    <link href="~/Jasmine/jasmine.css" rel="stylesheet" />*@
 </head>
     <script type="text/javascript" language="javascript">
-        var app = angular.module("myapp", ['ui.bootstrap'])
-
+        //var app = angular.module("myapp", ['ui.bootstrap', 'ngMock']);
+        var app = angular.module("myapp", ['ui.bootstrap']);
+        
         app.controller("loginModel", loginModel);
         app.factory("rememberMe", rememberMe);
         app.factory("encryptModule", encryptModule);
         app.factory('authInterceptor', authInterceptor);
         
+        app.directive("httpLoader", httpLoader);
+
         app.config(function ($httpProvider) {
             $httpProvider.interceptors.push('authInterceptor');
         });
+
     </script>
 <body ng-app="myapp">
-    
-    <div class="container" ng-controller="loginModel">
-        <form class="form-horizontal" name="userLoginForm">
-            <div class="form-group">
-                <label class="control-label col-xs-2">User Name</label>
-                <div class="col-xs-4">
-                    <input type="text" name="userName" class="form-control"  ng-model ="UserLogin.username" placeholder="Enter User Name" />
+    <div class="container">
+    <div class="content" style="width:500px; background-color:gainsboro" ng-controller="loginModel">
+        <div class='modal' data-backdrop='static' data-keyboard='false' http-loader>
+            <div class='modal-dialog' >
+                <div class='modal-content'>
+                    <div class='modal-header'><b>Processing...</b></div>
+                    <div class='modal-body'>
+                        <div class='progress'>
+                            <div class='progress-bar progress-bar-striped active' role='progressbar' aria-valuenow='100' aria-valuemin='100' aria-valuemax='100' style='width:100%'>
+                              Please Wait...
+                            </div>
+                          </div>
+                    </div>
                 </div>
             </div>
+        </div>
+        <form class="form-horizontal" name="form.userLoginForm" novalidate>
+            <div class="page-header centered" style="background-color:ghostwhite; padding-top:5px">
+               <h3>Login 
+                  @*<small>Subtext for header</small>*@
+               </h3>
+            </div>
             <div class="form-group">
-                <label class="control-label col-xs-2">Password</label>
-                <div class="col-xs-4">
-                    <input type="password" name="userName" class="form-control"  ng-model ="UserLogin.password" placeholder="Enter Password"/>
+                <label class="control-label col-xs-4">User Name</label>
+                <div class="col-xs-7">
+                    <input type="text" name="userName" class="form-control" required
+                        ng-class="{true: 'errorField'}[submitted && userLoginForm.userName.$invalid]"
+                        ng-model ="UserLogin.username" placeholder="Enter User Name" />
+                    <span class="errorMessage" ng-show="submitted && form.userLoginForm.userName.$invalid">Username is required.</span>
                 </div>
+                <div class="col-xs-1"></div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-4">Password</label>
+                <div class="col-xs-7">
+                    <input type="password" name="userPassword" class="form-control" required
+                        ng-class="{true: 'errorField'}[submitted && userLoginForm.userPassword.$invalid]"
+                         ng-model ="UserLogin.password" placeholder="Enter Password"/>
+                    <span class="errorMessage" ng-show="submitted && form.userLoginForm.userPassword.$invalid">Password is required.</span>
+                </div>
+                <div class="col-xs-1"></div>
             </div>
             
             <div class="form-group">
-                <label class="control-label col-xs-2"></label>
-                <div class="col-xs-5">
+                <label class="control-label col-xs-4"></label>
+                <div class="col-xs-7">
                     <label >
-                    <input type="checkbox" name="remember" ng-click="rememberMeChk()" ng-model="remember"> &nbsp; Remember Me
-                </label>
+                        <input type="checkbox" name="remember" ng-click="rememberMeChk()" ng-model="remember"> &nbsp; Remember Me
+                    </label>
+                    <div class="pull-right">
+                    <button class="btn btn-primary" ng-hide="enableEdit" type="button" value="Cancel" ng-click="validateUserLoginData()" >
+                            <span class="glyphicon glyphicon-log-in"> </span>  Login
+                        </button>
+                    </div>
                 </div>
-                <div class="col-xs-">
-                    <button class="btn btn-primary" ng-hide="enableEdit" type="button" value="Cancel" ng-click="Login()" >Login</button>
-                </div>
+                <div class="col-xs-1"></div>
             </div>
-            <div class="form-group">
-                <label class="control-label col-xs-2"></label>
-                
-            </div>
+            <div><br /></div>
         </form>
     </div>
+</div>
+    
+
 </body>
 </html>

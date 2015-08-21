@@ -1,4 +1,4 @@
-﻿function loginModel($scope, $http, $location, $window, rememberMe, encryptModule, encryptModule) {
+﻿function loginModel($scope, $http, $location, $window, rememberMe, encryptModule) {
 
     var urlBase = 'http://localhost:26996/ServiceIOS.svc/';
 
@@ -29,16 +29,34 @@
         }
     };
 
+    $scope.form = {}
+    $scope.submitted = false;
+    $scope.resultData = {};
+    $scope.isSuccess = false;
+
+    $scope.testFunction = function (num1, num2) {
+        return (num1 + num2);
+    }
+
+    $scope.validateUserLoginData = function ()
+    {
+        if (!$scope.form.userLoginForm.$valid) {
+            $scope.submitted = true;
+            return;
+        } else {
+            if ($scope.remember)
+                $scope.rememberMeChk();
+
+            $scope.Login();
+        }
+    }
+
     //$window.sessionStorage.masterData = null;
     $scope.Login = function () {
-
-        if ($scope.remember)
-            $scope.rememberMeChk();
-
         $http.post(urlBase + 'authenticateUser', $scope.UserLogin)
             .success(function (data, status, header, config) {
                 if (data.statusCode == true) {
-                    if (angular.isUndefined(data.data.prodUrl) || data.data.prodUrl == null || data.data.prodUrl != "") {
+                    if (data.data.prodUrl != "") {
                         $scope.UserLogin.clientID = data.data.clientID;
                         $scope.Login();
                         $scope.errorMessage = data.statusMessage;
@@ -47,14 +65,16 @@
                             rememberMe('clientID', $scope.UserLogin.clientID);
 
                     } else {
-                        $scope.data = data;
+                        $scope.resultData = data;
+                        $scope.isSuccess = true;
                         $window.sessionStorage.token = header("Auth_Token");
-                        if ($scope.remember)
-                        rememberMe('clientID', 0);
-                        
 
+                        if ($scope.remember)
+                            rememberMe('clientID', 0);
+                        
+                        $scope.LoadMasterData();
                         // change the path
-                        $window.location.href = 'CustomerUI/GetList';
+                        $window.location.href = '../CustomerUI/GetList';
                     }
                 }
                 else {
@@ -65,7 +85,25 @@
             });
     }
 
+    
+    $scope.LoadMasterData = function () {
+        $http.get(urlBase + "getMasterData/abc")
+        .success(function (result, status, header, config) {
+            if (result.statusCode) {
+                $scope.data.locationModels = result.data.locationModels;
+                $scope.data.locationLevelModel = result.data.locationLevelModel;
+                $scope.data.personClassModels = result.data.personClassModels;
+                $scope.data.safetyObservationType = result.data.safetyObservationType;
+                $scope.data.recommendationLevelModels = result.data.recommendationLevelModels;
+                $scope.data.currencies = result.data.currencies;
+                $scope.data.soTourDynamicQuestions = result.data.soTourDynamicQuestions;
+                $scope.data.soTourResultDynamicQuestions = result.data.soTourResultDynamicQuestions;
+                $scope.data.unitGroupTypes = result.data.unitGroupTypes;
 
+                $window.sessionStorage.masterData = JSON.stringify($scope.data);
+            }
+        })
+    }
 }
 
 function encryptModule() {
