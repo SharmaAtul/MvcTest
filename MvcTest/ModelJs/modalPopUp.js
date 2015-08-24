@@ -279,7 +279,7 @@
         item.modalTitle = "Search User";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'userModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/SearchUserPopup',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             size: size,
             resolve: {
@@ -302,7 +302,7 @@
         item.modalTitle = "Search User";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'userModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/SearchUserPopup',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             size: size,
             resolve: {
@@ -327,7 +327,7 @@
         item.modalTitle = "Search User";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'userModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/SearchUserPopup',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             size: size,
             resolve: {

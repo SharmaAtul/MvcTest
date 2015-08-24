@@ -1,0 +1,246 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">{{actionItem.modalTitle}}</h3>
+</div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-6">
+                <form class="form-horizontal" name="form.actionItemForm" novalidate>
+                <div class="form-group">
+                    </div>
+                <div class="form-group" ng-show="actionItem.actionID > 0">
+                    <label class="control-label col-xs-4">Action Item Number</label>
+                    <div class="col-xs-8">
+                        <p class="form-control-static">{{actionItem.actionNum}}</p>
+                        </div>
+                </div>
+                <div class="form-group" ng-show="actionItem.actionID > 0">
+                    <label class="control-label col-xs-4">Action ID</label>
+                    <div class="col-xs-8">
+                        <p class="form-control-static">{{actionItem.actionID}}</p>
+                        </div>
+                </div>
+                <div class="form-group" ng-show="actionItem.actionID > 0">
+                    <label class="control-label col-xs-4">Report Number</label>
+                    <div class="col-xs-8">
+                        <p class="form-control-static">{{actionItem.reportNum}}</p>
+                        </div>
+                </div>
+                <div class="form-group" ng-show="actionItem.actionID > 0">
+                    <label class="control-label col-xs-4">Report Description</label>
+                    <div class="col-xs-8">
+                        <p class="form-control-static">{{actionItem.actionSourceDescription}}</p>
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Action Item Description</label>
+                    <div class="col-xs-8">
+                        <p ng-hide="enableEdit" class="form-control-static">{{actionItem.actionItem}}</p>
+                        <input ng-show="enableEdit" type="text" class="form-control" 
+                        ng-class="{true: 'errorField'}[submitted && form.actionItemForm.actionItemDetail.$invalid]"
+                        name="actionItemDetail" ng-model="actionItem.actionItem" required placeholder="Description" />
+                        <span class="errorMessage" ng-show="form.actionItemForm.actionItemDetail.$invalid && submitted && form.actionItemForm.actionItemDetail.$error.required" >Action Item Description is required</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Assigned To</label>
+                    <div class="col-xs-8">
+                        <p ng-hide="enableEdit" class="form-control-static">{{actionItem.assignedTo.alias}}</p>
+                        <p ng-show="enableEdit" class="input-group">
+                            <input ng-show="enableEdit" type="text" class="form-control" name="assignedTo" 
+                            ng-class="{true: 'errorField'}[submitted && form.actionItemForm.assignedTo.$invalid]"
+                            ng-model="actionItem.assignedTo.alias" required placeholder="Select Assigned to " />
+                            <span class="input-group-btn">
+                            <button ng-show="enableEdit" type="button" class="btn btn-default" aria-label="Left Align" ng-click="searchUser()">
+                                <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+                            </button>
+                            </span>
+                        </p>
+                        <span class="errorMessage" ng-show="form.actionItemForm.assignedTo.$invalid && submitted && form.actionItemForm.assignedTo.$error.required" >Assigned to is required</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Recommendation Level</label>
+                    <div class="col-xs-8">
+                        <p ng-hide="enableEdit" class="form-control-static">{{actionItem.recommendationLevel}}</p>
+                        <select ng-show="enableEdit" type="radio" class="form-control" ng-model='actionItem.recommendationLevelID'>
+                            <option ng-repeat="item in recommendationLevels" 
+                                ng-selected='item.lupID==actionItem.recommendationLevelID'
+                                value="{{item.lupID}}" >
+                                {{item.lupValue}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Priority</label>
+                    <div class="col-xs-8">
+                        <p ng-hide="enableEdit" class="form-control-static">{{actionItem.priorityName}}</p>
+                        <select ng-show="enableEdit" class="form-control" ng-model='actionItem.priority'>
+                            <option ng-repeat="item in priorityList" 
+                                ng-selected='item.priorityID==actionItem.priority'
+                                value="{{item.priorityID}}" >
+                                {{item.priority}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Preventive / Corrective</label>
+                    <div class="col-xs-8">
+                        <p ng-hide="enableEdit" class="form-control-static">{{actionItem.preventive == 'P' ? "Preventive" : ( actionItem.preventive=='C'?'Corrective':'')}}</p>
+                        <select ng-show="enableEdit" type="radio" class="form-control" ng-model='actionItem.preventive'>
+                            <option ng-selected='actionItem.preventive=="P"' value="P" > Preventive </option>
+                            <option ng-selected='actionItem.preventive=="C"' value="C" > Corrective </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Target Date</label>
+                    <div class="col-xs-5">
+                        <p ng-hide="enableEdit" class="form-control-static">{{actionItem.targetDate | date:'MM-dd-yyyy'}}</p>
+                        <p ng-show="enableEdit" class="input-group">
+                            <input type="text" class="form-control" datepicker-popup="{{displayFormat}}" name="targetDate" ng-model="actionItem.targetDate" is-open="openedTargetDt" min-date="minDate" max-date="'2020-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" date-parser="{{parserFormat}}" close-text="Close" />
+                            <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="openTargetDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Approval Required</label>
+                    <div class="col-xs-8">
+                        <p ng-hide="enableEdit" class="form-control-static">{{actionItem.isApprovalRequired ? 'Yes' : 'No' }}</p>
+                        <div ng-show="enableEdit" class="checkbox"><label><input type="checkbox" ng-checked="actionItem.isApprovalRequired"
+                        ng-model="actionItem.isApprovalRequired"/> Is Approval Required</label></div>
+                    </div>
+                </div>
+                <div ng-show="actionItem.isApprovalRequired" class="form-group">
+                    <label class="control-label col-xs-4">Approver</label>
+                    <div class="col-xs-8">
+                        <p ng-hide="enableEdit" class="form-control-static">{{ approver.alias }}</p>
+                        <p ng-show="enableEdit" class="input-group">
+                            <input ng-show="enableEdit" type="text" class="form-control" name="approver" ng-model="actionItem.approver.alias" required placeholder="Select Approver " />
+                            <span class="input-group-btn">
+                                <button ng-show="enableEdit" type="button" class="btn btn-default" aria-label="Left Align" ng-click="searchApprover()">
+                                <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span>
+                            </button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">CC Users</label>
+                    <div class="col-xs-8">
+                        @*<input type="text" class="form-control form-control-small" name="approver" ng-model="actionItem.approver.alias" required placeholder="Select Approver " />*@
+                        <button ng-show="enableEdit" type="button" class="btn btn-default" aria-label="Left Align" ng-click="addCCUser()">
+                            <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> Add CC User
+                        </button>
+                    </div>
+                </div>
+                <div ng-show="actionItem.ccUsers.length > 0" class="form-group">
+                    <label class="control-label col-xs-4"></label>
+                    <div class="col-xs-8">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>User Name</th>
+                                    <th ng-show="enableEdit"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="user in actionItem.ccUsers">
+                                    <td>{{user.alias}}</td>
+                                    <td ng-show="enableEdit">
+                                        <button type="button" class="btn btn-default" aria-label="Left Align" confirmed-click="onCCUserDelete($index)" 
+                                            ng-confirm-click="Are you sure to delete?">
+                                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr ng-hide="actionItem.ccUsers.length > 0">
+                                    <td colspan="2">No Team Memeber selected...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+            </div>
+            <div class="col-md-6">
+                <form class="form-horizontal" name="actionItemFormComplete" novalidate>
+                <div class="form-group">
+                    </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Completion Date</label>
+                    <div class="col-xs-5">
+                        <p ng-hide="enableEdit" class="form-control-static">{{ actionItem.compDate | date:'MM-dd-yyyy'}}</p>
+                        <p ng-show="enableEdit" class="input-group">
+                            <input type="text" class="form-control" datepicker-popup="{{displayFormat}}" date-parser="parserFormat" name="compDate" ng-model="actionItem.compDate" is-open="openedCompletedDt" min-date="minDate" max-date="'2020-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                            <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="openCompletedDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Direct Cost</label>
+                    <div class="col-xs-8">
+                        <p ng-hide="enableEdit" class="form-control-static">{{ actionItem.directCost }} {{actionItem.currencyvthCode}}</p>
+                        <input ng-show="enableEdit" class="form-control form-control-x-small" type="text" ng-model="actionItem.directCost"/>
+                        <select ng-show="enableEdit" class="form-control form-control-small" ng-model="actionItem.currencyID">
+                            <option ng-selected="actionItem.currencyID == data.unitID"
+                                ng-repeat="data in currencyList" value="{{data.unitID}}"
+                            >{{data.unitName}}
+                            </option>
+                            </select>
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Indirect Person Hours</label>
+                    <div class="col-xs-3">
+                        <p ng-hide="enableEdit" class="form-control-static">{{ actionItem.indirectPersonHrs }}</p>
+                        <input ng-show="enableEdit" type="text" class="form-control" name="indirectPersonHrs" ng-model="actionItem.indirectPersonHrs" required placeholder="Enter Indirect Person Hours" />
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Response</label>
+                    <div class="col-xs-8">
+                        <p ng-hide="enableEdit" class="form-control-static">{{ actionItem.response }}</p>
+                        <input ng-show="enableEdit" type="text" class="form-control" name="response" ng-model="actionItem.response" required placeholder="Enter User Response" />
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Verified Date</label>
+                    <div class="col-xs-5">
+                        <p ng-hide="enableEdit" class="form-control-static">{{ actionItem.verifiedDate }}</p>
+                        <p ng-show="enableEdit" class="input-group">
+                            <input type="text" class="form-control" datepicker-popup="{{displayFormat}}" date-parser="parserFormat" name="verifiedDate" ng-model="actionItem.verifiedDate" is-open="openedVerifiedDt" min-date="minDate" max-date="'2020-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                            <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="openVerifiedVDate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+                    </div>
+                                
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Completed By</label>
+                    <div class="col-xs-8">{{actionItem.completedBy.alias}}
+                        </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-xs-4">Verified By</label>
+                    <div class="col-xs-8">{{actionItem.verifiedBy.alias}}</div>
+                </div>
+            </form>
+            </div>
+        </div>
+    </div>
+                
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-show="enableEdit" ng-click="ok()">Save</button>
+    <button class="btn btn-link" ng-show="enableEdit && actionItem.actionID > -1" ng-click="enableEdit=false">back to view </button>
+            
+    <button class="btn btn-primary" ng-hide="enableEdit" ng-click="enableEdit=true">Edit</button>
+    <button class="btn btn-link" ng-hide="enableEdit && actionItem.actionID > -1" ng-click="cancel()">Cancel</button>
+</div>

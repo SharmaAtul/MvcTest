@@ -14,6 +14,12 @@ namespace MvcTest
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                name: "Templates",
+                url: "Templates/{template}",
+                defaults: new { controller = "CustomerUI", action = "Template" }
+            );
+
+            routes.MapRoute(
                 name: "Customer",
                 url: "",
                 defaults: new { controller = "CustomerUI", action = "Login", id = UrlParameter.Optional }
