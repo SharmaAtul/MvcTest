@@ -1,0 +1,40 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Select user</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" name="userForm" novalidate>
+            <div class="form-group">
+                <label class="control-label col-xs-1"></label>
+                <div class="col-xs-10">
+                <p class="form-control-static">Enter any part of name, email or unique id and click 'Search':</p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-1"></label>
+                <div class="col-xs-10">
+                    <p class="input-group">
+                        <input type="text" class="form-control" name="userInfo" ng-model="searchTerm" required placeholder="Enter any part of name, email or unique id" />
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" aria-label="Left Align" ng-click="getUsers()">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                        </button>
+                        </span>
+                    </p>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-xs-1"></label>
+                <div class="col-xs-10">
+                    <select size=10 class="form-control">
+                        <option ng-repeat="user in userData" value="{{user}}" ng-click="updateSelectedUser(user)" >
+                            {{user.alias}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="selectUser()">Done</button>
+    <button class="btn btn-link" ng-click="cancel()">Cancel</button>
+</div>

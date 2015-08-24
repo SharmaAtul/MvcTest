@@ -35,6 +35,25 @@ namespace MvcTest.Controllers
         //    return View("ObservationDetail");
         //}
 
+        public ActionResult Template(string template)
+        {
+            switch (template.ToLower())
+            {
+                case "searchuserpopup":
+                    return PartialView("~/Views/Shared/SearchUserPopup.cshtml");
+                case "actionitempopup":
+                    return PartialView("~/Views/Shared/ActionItemPopup.cshtml");
+                case "attachmentpopup":
+                    return PartialView("~/Views/Shared/AttachmentPopup.cshtml");
+                case "obsresultpopup":
+                    return PartialView("~/Views/Shared/ObsResultPopup.cshtml");
+                case "obsresultobservationpopup":
+                    return PartialView("~/Views/Shared/ObsResultObservationPopup.cshtml");
+                default:
+                    throw new Exception("template not known");
+            }
+        }
+
         public ActionResult GetDetail()
         {
             return View("ObservationDetail");

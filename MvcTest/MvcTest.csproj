@@ -198,7 +198,12 @@
     <Content Include="Scripts\ui-bootstrap-custom-0.13.2.min.js" />
     <Content Include="Scripts\ui-bootstrap-custom-tpls-0.13.2.js" />
     <Content Include="Scripts\ui-bootstrap-custom-tpls-0.13.2.min.js" />
+    <Content Include="Views\Shared\AttachmentPopup.cshtml" />
+    <Content Include="Views\Shared\ObsResultPopup.cshtml" />
+    <Content Include="Views\Shared\ObsResultObservationPopup.cshtml" />
+    <None Include="Views\Shared\SearchUserPopup.cshtml" />
     <Content Include="Views\CustomerUI\ucQuestion.html" />
+    <None Include="Views\Shared\ActionItemPopup.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -218,7 +223,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

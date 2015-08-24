@@ -1,0 +1,33 @@
+﻿<div class="modal-header">
+    <h3 class="modal-title">Select Observation Result(s)</h3>
+</div>
+<div class="modal-body">
+    <form class="form-horizontal" name="resultForm" novalidate>
+        <div class="form-group">
+            <div class="col-xs-12">
+                <span ng-repeat="category in obsCategories">
+                <div class="row">
+                    <div class="col-xs-12">{{category.lupValue}}</div>
+                </div>
+                    <div ng-repeat="subCategory in category.subCategoryModels">
+                        <div class="row">
+                            <div class="col-xs-2"></div>
+                            <div class="col-xs-5">{{subCategory.lupValue}}</div>
+                            <div class="col-xs-2">
+                                <div class="checkbox"><label><input type="radio" name="category.lupID" /> Safe</label></div>
+                            </div>
+                            <div class="col-xs-3">
+                                <div class="checkbox"><label><input type="radio" name="category.lupID" /> Unsafe</label></div>
+                            </div>
+                        </div>
+                        </ br>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="updateObsResultDetail()">Save</button>
+    <button class="btn btn-link" ng-click="cancel()">Cancel</button>
+</div>

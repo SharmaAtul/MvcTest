@@ -92,7 +92,7 @@
         data.modalTitle = "Edit Observation Result (" + obsNum + ")";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'obsResultPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/ObsResultPopUp',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             size: size,
             resolve: {
@@ -127,7 +127,7 @@
         data.modalTitle = "Add Observation Result";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'obsResultPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/ObsResultPopup',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             size: size,
             resolve: {
@@ -165,7 +165,7 @@
         data.modalTitle = "Add Observation Result";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'obsObservationResultPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/ObsResultObservationPopup',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             size: size,
             resolve: {
@@ -204,7 +204,7 @@
         actionItem.modalTitle = "Edit Action Item (" + data.actionItem.actionNum + ")";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'actionItemModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/ActionItemPopup',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             size: size,
             resolve: {
@@ -244,7 +244,7 @@
         data.type = "ActionItem";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'actionItemModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/ActionItemPopup',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             size: size,
             resolve: {
@@ -280,7 +280,7 @@
 
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'userModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/SearchUserPopup',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             //size: size,
             resolve: {
@@ -306,7 +306,7 @@
         item.type = "User";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'userModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/SearchUserPopup',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             //size: size,
             resolve: {
@@ -337,7 +337,7 @@
         //item.modalTitle = "Search User";
         var modalInstance = $modal.open({
             animation: $scope.animationsEnabled,
-            templateUrl: 'attachmentModalPopUp.html',// $templateCache.get('myModalContent.html'),
+            templateUrl: '../Templates/AttachmentPopup',// $templateCache.get('myModalContent.html'),
             controller: 'modalPopUp',
             //size: size,
             resolve: {
@@ -752,6 +752,9 @@
         $scope.observation.soTourTeam = $scope.observationCopy.soTourTeam;
         $scope.observation.description = $scope.observationCopy.description;
         $scope.observation.details = $scope.observationCopy.details;
+
+        $scope.sotRowEditNum = -1;
+        $scope.teamSubmitted = false;
 
         var locData = [];
         var arrResult = $($scope.locationData.locations).filter(function (i, n) { return n.dLocationID === $scope.observation.locationID });

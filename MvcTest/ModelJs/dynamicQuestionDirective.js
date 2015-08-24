@@ -8,9 +8,23 @@
         //},
         link: function (scope, element, attributes) {
             var responseHTML = "";
+            var validationChk = "";
+            var validationChkP = "";
+
+            if (attributes.isRequired=='true')
+            {
+                validationChk = 'name ="q' + attributes.questionId + '" ng-class="{true: \'errorField\'}[form.observationForm.q' + attributes.questionId + '.$invalid && ' + attributes.submitField + ']"';
+                validationChk += 'ng-required="true"';
+
+                validationChkP = 'name ="qP' + attributes.questionId + '" ng-class="{true: \'errorField\'}[form.observationForm.qP' + attributes.questionId + '.$invalid && ' + attributes.submitField + ']"';
+                validationChkP += 'ng-required="true"';
+            }
+
             if (attributes.questionType == 'MultipleSelectionBox') {
 
-                responseHTML += '<select class="form-control form-control-small" size="3" ng-show="enableEdit" ng-multiple="true" ng-model="question.multipleAnswers" ng-change="UpdateMultipleAnswerNew(question)" multiple>';
+                responseHTML = '<select class="form-control form-control-small" size="3" ng-show="enableEdit" ng-multiple="true"';
+                responseHTML += validationChk;
+                responseHTML += 'ng-model="question.multipleAnswers" ng-change="UpdateMultipleAnswerNew(question)" multiple>';
                 responseHTML += '<option ng-selected="question.multipleAnswersIds.indexOf(data.questionLupAnswerId) > -1"';
                 responseHTML += ' ng-repeat="data in dynamicQuestion.questionsAnswers" value="{{data}}"';
                 responseHTML += '>{{data.answer}}';
@@ -28,7 +42,9 @@
             }
             else if (attributes.questionType == 'DecisionSelectionBox') {
                 //for multi check box
-                responseHTML += '<select class="form-control form-control-small" ng-show="enableEdit">';
+                responseHTML = '<select class="form-control form-control-small" ng-show="enableEdit"';
+                responseHTML += validationChk;
+                responseHTML += '>';
                 responseHTML += '<option ng-click="updateAnswerId(question, data)"';
                 responseHTML += ' ng-selected="question.answerId.indexOf(data.questionLupAnswerId) > -1"';
                 responseHTML += ' ng-repeat="data in dynamicQuestion.questionsAnswers" value="{{data.questionLupAnswerId}}"';
@@ -50,7 +66,9 @@
             else if (attributes.questionType == 'SelectionBox') {
                 //for multi check box
 
-                responseHTML += '<select class="form-control form-control-small" ng-show="enableEdit">';
+                responseHTML = '<select class="form-control form-control-small" ng-show="enableEdit"';
+                responseHTML += validationChk;
+                responseHTML += '>';
                 responseHTML += '<option ng-click="updateAnswerId(question, data)"';
                 responseHTML += ' ng-selected="question.answerId.indexOf(data.questionLupAnswerId) > -1"';
                 responseHTML += ' ng-repeat="data in dynamicQuestion.questionsAnswers" value="{{data.questionLupAnswerId}}"';
@@ -71,8 +89,9 @@
             }
             else if (attributes.questionType == 'CheckBox') {
                 //for multi check box
-                responseHTML += '<span ng-repeat="data in dynamicQuestion.questionsAnswers" ng-show="enableEdit">'
+                responseHTML = '<span ng-repeat="data in dynamicQuestion.questionsAnswers" ng-show="enableEdit">';
                 responseHTML += '<div class="checkbox"><label><input type="radio" ng-model = "question.answerId" name="question.questionID"'
+                responseHTML += validationChk;
                 responseHTML += 'ng-checked="question.answerId==data.questionLupAnswerId"'
                 responseHTML += 'ng-click="updateAnswerId(question, data)"';
                 responseHTML += 'value="{{data.questionLupAnswerId}}"/> {{data.answer}}</label></div>';
@@ -89,9 +108,13 @@
             }
             else if (attributes.questionType == 'Currency') {
                 //for multi check box
-
-                responseHTML += '<input class="form-control form-control-x-small" ng-show="enableEdit" type="text" ng-model="question.answer" ng-blur="UpdateDisplayAnswer(question)"/>';
-                responseHTML += '<select class="form-control form-control-small" ng-model="question.answerId" ng-show="enableEdit">';
+                responseHTML = '<input class="form-control form-control-x-small" ng-show="enableEdit" type="text" ng-model="question.answer"';
+                responseHTML += validationChk;
+                responseHTML += 'ng-blur="UpdateDisplayAnswer(question)"/>';
+                responseHTML += '<select class="form-control form-control-small" ng-model="question.answerId" ng-show="enableEdit"';
+                responseHTML += validationChkP;
+                responseHTML += '>';
+                responseHTML += "<option value=''>-select-</option>"
                 responseHTML += '<option ng-selected="question.answerId==data.unitID"';
                 responseHTML += ' ng-repeat="data in currencies" value="{{data.unitID}}"';
                 responseHTML += '>{{data.unitName}}';
@@ -108,20 +131,22 @@
                 //responseHTML += '</option>';
                 //responseHTML += '</select>';
                 //responseHTML += '</span>';
-
             }
             else if (attributes.questionType == 'Unit') {
                 //for multi check box
                 responseHTML = '<span ng-repeat="units in unitGroupTypes | filter : { unitGroupID : question.unitGroupID }" ng-show="enableEdit">'
-                //responseHTML += '<span ng-repeat="data in quesMaster.data">'
-                responseHTML += '<input class="form-control form-control-x-small" ng-show="enableEdit" type="text" ng-model="question.answer" ng-blur="UpdateDisplayAnswer(question)"/>';
-                responseHTML += '<select class="form-control form-control-small" ng-model="question.answerId">';
+                responseHTML += '<input class="form-control form-control-x-small" ng-show="enableEdit" type="text" ng-model="question.answer" ';
+                responseHTML += validationChk;
+                responseHTML += 'ng-blur="UpdateDisplayAnswer(question)"/>';
+                responseHTML += '<select class="form-control form-control-small" ng-model="question.answerId"';
+                responseHTML += validationChkP;
+                responseHTML += '>';
+                responseHTML += "<option value=''>-select-</option>"
                 responseHTML += '<option ng-selected="question.answerId==data.unitID"';
                 responseHTML += ' ng-repeat="data in units.unitTypes" value="{{data.unitID}}"';
                 responseHTML += '>{{data.unitName}}';
                 responseHTML += '</option>';
                 responseHTML += '</select>';
-                //responseHTML += '</span>';
                 responseHTML += '</span>';
 
                 //responseHTML = '<span ng-repeat="quesMaster in questionMaster | filter : { questionID : question.questionID }" ng-show="enableEdit">'
@@ -136,11 +161,10 @@
                 //responseHTML += '</select>';
                 ////responseHTML += '</span>';
                 //responseHTML += '</span>';
-
             }
             else if (attributes.questionType == 'MultipleCheckBox')
             {
-                responseHTML += '<span ng-repeat="data in dynamicQuestion.questionsAnswers">'
+                responseHTML = '<span ng-repeat="data in dynamicQuestion.questionsAnswers">'
                 responseHTML += '<input class="form-control" type="checkbox" ng-checked="question.multipleAnswersIds.indexOf(data.methodID) > -1"'
                 responseHTML += 'ng-click="UpdateMultipleAnswer(question, data)"';
                 responseHTML += 'value="{{data.questionLupAnswerId}}"/> {{data.answer}}';
@@ -154,14 +178,23 @@
                 //responseHTML += 'value="{{data.methodID}}"/> {{data.methodName}}';
                 //responseHTML += '</span>';
                 //responseHTML += '</span>';
-                        
             }
-            else if (attributes.questionType == 'Medium TextBox')
-                responseHTML = '<input class="form-control form-control-small" ng-show="enableEdit" type="text" ng-model="question.displayAnswer" ng-blur="UpdateAnswer(question)" />';
-            else if (attributes.questionType == 'Multiline TextBox')
+            else if (attributes.questionType == 'Medium TextBox') {
+
+                responseHTML = '<input class="form-control form-control-small" ng-show="enableEdit" type="text"'
+                responseHTML += validationChk;
+                responseHTML += 'ng-model="question.displayAnswer" ng-blur="UpdateAnswer(question)"/>';
+
+            } else if (attributes.questionType == 'Multiline TextBox')
                 responseHTML = '<input class="form-control form-control-small" multiline row="3" ng-show="enableEdit" type="text" ng-model="question.displayAnswer" ng-blur="UpdateAnswer(question)" />';
-            else if (attributes.questionType == 'Small TextBox')
-                responseHTML = '<input class="form-control form-control-x-small" ng-show="enableEdit" type="text" ng-model="question.displayAnswer" ng-blur="UpdateAnswer(question)"/>';
+            else if (attributes.questionType == 'Small TextBox'){
+
+                responseHTML = '<input class="form-control form-control-small" ng-show="enableEdit" type="text"'
+                responseHTML += validationChk;
+                responseHTML += 'ng-model="question.displayAnswer" ng-blur="UpdateAnswer(question)"/>';
+            }
+
+            responseHTML += '<span class="errorMessage" ng-show="' + attributes.formName + '.q' + attributes.questionId + '.$invalid && ' + attributes.submitField + '" > required</span>';
 
             element.html(responseHTML);
             $compile(element.contents())(scope);
