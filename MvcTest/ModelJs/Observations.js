@@ -1,4 +1,5 @@
-﻿function Observations( $scope, $http, $location, $window) {
+﻿angular.module('app').controllerProvider.register('Observations', ['$rootScope', '$scope', '$http', '$location', '$window', '$state'
+    , function ($rootScope, $scope, $http, $location, $window, $state) {
     var urlBase = 'http://localhost:26996/ServiceIOS.svc/';
     //$rootScope.loading = true;
     $scope.displayFormat = 'MM-dd-yyyy';
@@ -37,27 +38,26 @@
     }
     $scope.data = {};
 
-    $scope.LoadMasterData = function () {
-        $http.get(urlBase + "getMasterData/abc")
-        .success(function (result, status, header, config) {
-            if (result.statusCode) {
-                $scope.data.locationModels = result.data.locationModels;
-                $scope.data.locationLevelModel = result.data.locationLevelModel;
-                $scope.data.personClassModels = result.data.personClassModels;
-                $scope.data.safetyObservationType = result.data.safetyObservationType;
-                $scope.data.recommendationLevelModels = result.data.recommendationLevelModels;
-                $scope.data.currencies = result.data.currencies;
-                $scope.data.soTourDynamicQuestions = result.data.soTourDynamicQuestions;
-                $scope.data.soTourResultDynamicQuestions = result.data.soTourResultDynamicQuestions;
-                $scope.data.unitGroupTypes = result.data.unitGroupTypes;
-            }
-        })
-    }
+    //$scope.LoadMasterData = function () {
+    //    $http.get(urlBase + "getMasterData/abc")
+    //    .success(function (result, status, header, config) {
+    //        if (result.statusCode) {
+    //            $scope.data.locationModels = result.data.locationModels;
+    //            $scope.data.locationLevelModel = result.data.locationLevelModel;
+    //            $scope.data.personClassModels = result.data.personClassModels;
+    //            $scope.data.safetyObservationType = result.data.safetyObservationType;
+    //            $scope.data.recommendationLevelModels = result.data.recommendationLevelModels;
+    //            $scope.data.currencies = result.data.currencies;
+    //            $scope.data.soTourDynamicQuestions = result.data.soTourDynamicQuestions;
+    //            $scope.data.soTourResultDynamicQuestions = result.data.soTourResultDynamicQuestions;
+    //            $scope.data.unitGroupTypes = result.data.unitGroupTypes;
+    //        }
+    //    })
+    //}
 
     $scope.$watch("observationData", function () {
-        
-        for (var i = 0; i < $scope.observationData.length; i++)
-        {
+
+        for (var i = 0; i < $scope.observationData.length; i++) {
             var obs = $scope.observationData[i];
             obs.completedColor = $scope.getCompletedColor(obs.completed);
             obs.pendingColor = $scope.getPendingColor(obs.pending);
@@ -80,8 +80,9 @@
     }
 
     $scope.GetDetail = function (id) {
-        $window.sessionStorage.masterData =  JSON.stringify($scope.data);
-        $window.location.href = 'GetDetail#?id=' + id;
+        $window.sessionStorage.masterData = JSON.stringify($scope.data);
+        $state.go("Default.Home.Observations.ObservationDetail", { "id": id });
+        //$location.path('CustomerUI/GetDetail/' + id);
     }
 
     $scope.getCompletedColor = function (val) {
@@ -105,24 +106,23 @@
             return 'red';
     }
 
-    if (angular.isUndefined($window.sessionStorage.masterData) || $window.sessionStorage.masterData === null || $window.sessionStorage.masterData=="{}")
-        $scope.LoadMasterData();
-    else
-    {
-        var data = JSON.parse($window.sessionStorage.masterData);
-        //var data = $window.sessionStorage.data;
-        $scope.data.locationModels = data.locationModels;
-        $scope.data.locationLevelModel = data.locationLevelModel;
-        $scope.data.personClassModels = data.personClassModels;
-        $scope.data.safetyObservationType = data.safetyObservationType;
-        $scope.data.recommendationLevelModels = data.recommendationLevelModels;
-        $scope.data.currencies = data.currencies;
-        $scope.data.soTourDynamicQuestions = data.soTourDynamicQuestions;
-        $scope.data.soTourResultDynamicQuestions = data.soTourResultDynamicQuestions;
-        $scope.data.unitGroupTypes = data.unitGroupTypes;
-    }
+    //if (angular.isUndefined($window.sessionStorage.masterData) || $window.sessionStorage.masterData === null || $window.sessionStorage.masterData == "{}")
+    //    $scope.LoadMasterData();
+    //else {
+    //    //var data = JSON.parse($window.sessionStorage.masterData);
+    //    //var data = $window.sessionStorage.data;
+    //    //$scope.data.locationModels = data.locationModels;
+    //    //$scope.data.locationLevelModel = data.locationLevelModel;
+    //    //$scope.data.personClassModels = data.personClassModels;
+    //    //$scope.data.safetyObservationType = data.safetyObservationType;
+    //    //$scope.data.recommendationLevelModels = data.recommendationLevelModels;
+    //    //$scope.data.currencies = data.currencies;
+    //    //$scope.data.soTourDynamicQuestions = data.soTourDynamicQuestions;
+    //    //$scope.data.soTourResultDynamicQuestions = data.soTourResultDynamicQuestions;
+    //    //$scope.data.unitGroupTypes = data.unitGroupTypes;
+    //}
 
     $scope.LoadData();
     $scope.loading = false;
-}
+}]);
 

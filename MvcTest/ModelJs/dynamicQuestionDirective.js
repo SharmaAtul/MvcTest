@@ -1,4 +1,4 @@
-﻿function ngDynamicquestion ($compile) {
+﻿angular.module('app').compileProvider.directive('ngDynamicquestion', ['$compile', function ($compile) {
     return {
         restrict: 'A',
         replace: true,
@@ -11,8 +11,7 @@
             var validationChk = "";
             var validationChkP = "";
 
-            if (attributes.isRequired=='true')
-            {
+            if (attributes.isRequired == 'true') {
                 validationChk = 'name ="q' + attributes.questionId + '" ng-class="{true: \'errorField\'}[form.observationForm.q' + attributes.questionId + '.$invalid && ' + attributes.submitField + ']"';
                 validationChk += 'ng-required="true"';
 
@@ -162,8 +161,7 @@
                 ////responseHTML += '</span>';
                 //responseHTML += '</span>';
             }
-            else if (attributes.questionType == 'MultipleCheckBox')
-            {
+            else if (attributes.questionType == 'MultipleCheckBox') {
                 responseHTML = '<span ng-repeat="data in dynamicQuestion.questionsAnswers">'
                 responseHTML += '<input class="form-control" type="checkbox" ng-checked="question.multipleAnswersIds.indexOf(data.methodID) > -1"'
                 responseHTML += 'ng-click="UpdateMultipleAnswer(question, data)"';
@@ -187,7 +185,7 @@
 
             } else if (attributes.questionType == 'Multiline TextBox')
                 responseHTML = '<input class="form-control form-control-small" multiline row="3" ng-show="enableEdit" type="text" ng-model="question.displayAnswer" ng-blur="UpdateAnswer(question)" />';
-            else if (attributes.questionType == 'Small TextBox'){
+            else if (attributes.questionType == 'Small TextBox') {
 
                 responseHTML = '<input class="form-control form-control-small" ng-show="enableEdit" type="text"'
                 responseHTML += validationChk;
@@ -201,4 +199,4 @@
         }
 
     };
-}
+}]);

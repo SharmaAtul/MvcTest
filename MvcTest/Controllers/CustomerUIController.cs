@@ -20,6 +20,11 @@ namespace MvcTest.Controllers
         //    return View();
         //}
 
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         public ActionResult Login()
         {
             return View();
@@ -39,6 +44,18 @@ namespace MvcTest.Controllers
         {
             switch (template.ToLower())
             {
+                case "login":
+                    return PartialView("~/Views/CustomerUI/Login.cshtml");
+                case "home":
+                    return PartialView("~/Views/CustomerUI/Home.cshtml");
+                case "default":
+                    return PartialView("~/Views/CustomerUI/Default.cshtml");
+                case "observation":
+                    return PartialView("~/Views/CustomerUI/Observation.cshtml");
+                case "observationlist":
+                    return PartialView("~/Views/CustomerUI/ObservationList.cshtml");
+                case "observationdetail":
+                    return PartialView("~/Views/CustomerUI/ObservationDetail.cshtml");
                 case "searchuserpopup":
                     return PartialView("~/Views/Shared/SearchUserPopup.cshtml");
                 case "actionitempopup":
@@ -49,9 +66,16 @@ namespace MvcTest.Controllers
                     return PartialView("~/Views/Shared/ObsResultPopup.cshtml");
                 case "obsresultobservationpopup":
                     return PartialView("~/Views/Shared/ObsResultObservationPopup.cshtml");
+                case "breadcrumb":
+                    return PartialView("~/Views/Shared/breadcrumb.cshtml");
                 default:
                     throw new Exception("template not known");
             }
+        }
+
+        public ActionResult Script(string fileName)
+        {
+            return File(System.IO.File.ReadAllBytes(Server.MapPath("/"+fileName.Replace("|","/"))), "text/javascript"); 
         }
 
         public ActionResult GetDetail()

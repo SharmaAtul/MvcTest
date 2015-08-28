@@ -20,16 +20,26 @@ namespace MvcTest
             );
 
             routes.MapRoute(
+                name: "Script",
+                url: "Script/{fileName}",
+                defaults: new { controller = "CustomerUI", action = "Script" }
+            );
+
+            routes.MapRoute(
                 name: "Customer",
                 url: "",
-                defaults: new { controller = "CustomerUI", action = "Login", id = UrlParameter.Optional }
+                defaults: new { controller = "CustomerUI", action = "Index", id = UrlParameter.Optional }
             );
 
             routes.MapRoute(
                 name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                url: "{*url}",
+                defaults: new { controller = "CustomerUI", action = "Index" }
+                //url: "{controller}/{action}/{id}",
+                //defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
+
+            routes.AppendTrailingSlash = true;
         }
     }
 }

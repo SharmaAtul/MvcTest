@@ -1,5 +1,6 @@
-﻿function ObservationDetail($rootScope, $scope, $http, $location, $window, $modal, fileUpload, $timeout) {
-    
+﻿angular.module('app').controllerProvider.register('ObservationDetail', ['$rootScope', '$scope', '$http', '$location', '$window', '$modal', 'fileUpload', '$timeout', '$stateParams', '$state'
+,function ($rootScope, $scope, $http, $location, $window, $modal, fileUpload, $timeout, $stateParam, $state) {
+
     $scope.observation = {
         "details": "",
         "locationID": 0,
@@ -57,13 +58,13 @@
 
     $rootScope.loading = true;
 
-    $scope.obsMethods = {data:[]};
+    $scope.obsMethods = { data: [] };
 
-    $scope.locationLevelData = { locationLevels : [ ] }
+    $scope.locationLevelData = { locationLevels: [] }
 
     $scope.personClasses = []
-    
-    $scope.locationData = {locations: []}
+
+    $scope.locationData = { locations: [] }
 
     $scope.animationsEnabled = true;
     //$scope.currentTpl = "";
@@ -72,7 +73,7 @@
     $scope.parserFormat = 'MM-dd-yyyy';
 
 
-    $scope.editObservationResult = function (size,soTourID, soTourResultID, obsNum, indexNum) {
+    $scope.editObservationResult = function (size, soTourID, soTourResultID, obsNum, indexNum) {
         var data = {};
         data.soTourID = soTourID;
         data.soTourResultID = soTourResultID;
@@ -255,7 +256,7 @@
         });
 
         modalInstance.result.then(function (selectedItem) {
-            selectedItem.actionNum = $scope.observation.reportNum + '_' + ($scope.observation.sotActionItems.length+1).toString();
+            selectedItem.actionNum = $scope.observation.reportNum + '_' + ($scope.observation.sotActionItems.length + 1).toString();
             selectedItem.actionSourceDescription = $scope.observation.details;
             selectedItem.actionID = 0;
             selectedItem.sourceID = $scope.id;
@@ -264,12 +265,12 @@
             $http.post(urlBase + "UpdateActionItem", selectedItem)
             .success(function (result, status, header, config) {
                 if (result.statusCode) {
-                    selectedItem.actionID=result.data;
+                    selectedItem.actionID = result.data;
                 }
             })
             $scope.observation.sotActionItems.push(selectedItem)
         }, function () {
-            
+
         });
     };
 
@@ -352,7 +353,7 @@
             attachment.source = 'OTour';
             attachment.sourceID = $scope.observation.soTourID;
             attachment = $scope.uploadFileToUrl(attachment);
-            
+
             //$scope.sotAttachments = attachment;
         }, function () {
             //$log.info('Modal dismissed at: ' + new Date());
@@ -376,8 +377,7 @@
         });
     }
 
-    $scope.fileUploaded= function(attachment)
-    {
+    $scope.fileUploaded = function (attachment) {
         $scope.observation.sotAttachments.push(attachment);
     }
 
@@ -399,7 +399,7 @@
         //var fileExtension = fileData[fileData.length - 1];
         //fileName = fileName.replace('','');
         $http.get(urlBase + 'downloadFileTemp/' + fileData[0] + '/' + fileData[1], { responseType: 'arraybuffer' }).success(function (data, status, headers) {
-            
+
             var octetStreamMime = 'application/octet-stream';
             var success = false;
 
@@ -424,13 +424,13 @@
     }
 
     var urlBase = 'http://localhost:26996/ServiceIOS.svc/';
-    var searchData = $location.search();
+    //var searchData = $location.search();
 
-    $scope.getLocation = function(locationId) {
+    $scope.getLocation = function (locationId) {
         return $scope.locations.locationId === locationId;
     }
 
-    $scope.id = searchData.id;
+    $scope.id = $stateParam.id;
 
     $scope.myFile = {};
 
@@ -441,14 +441,12 @@
         fileUpload.uploadFileToUrl(file);
     }
 
-    $scope.updateLocations = function updateLocations(levelNo, location)
-    {
+    $scope.updateLocations = function updateLocations(levelNo, location) {
         $scope.locationLevelData.locationLevels[levelNo].parentLocId = location.dLocationID;
         $scope.locationLevelData.locationLevels[levelNo - 1].locId = location.dLocationID;
         $scope.observation.locationID = location.dLocationID;
 
-        for (var index = levelNo+1; index < $scope.locationLevelData.locationLevels.length; index++)
-        {
+        for (var index = levelNo + 1; index < $scope.locationLevelData.locationLevels.length; index++) {
             $scope.locationLevelData.locationLevels[index].parentLocId = 0;
             $scope.locationLevelData.locationLevels[index - 1].locId = 0;
         }
@@ -487,98 +485,98 @@
     //$scope.observationMasterData = {};
 
     $scope.data = {};
-    $scope.LoadMasterData = function () {
-        $http.get(urlBase + "getObservationMasterData")
-        .success(function (result, status, header, config) {
-            if (result.statusCode) {
-                
-                $scope.locationData.locations = result.data.locationModels;
-                $scope.locationLevelData.locationLevels = result.data.locationLevelModel;
-                $scope.personClasses = result.data.personClassModels;
-                $scope.obsMethods = result.data.safetyObservationType;
-                $scope.recommendationLevels = result.data.recommendationLevelModels;
-                $scope.currencies = result.data.currencies;
-                $scope.soTourDynamicQuestions = result.data.soTourDynamicQuestions;
-                $scope.soTourResultDynamicQuestions = result.data.soTourResultDynamicQuestions;
-                $scope.unitGroupTypes = result.data.unitGroupTypes;
-            }
-        })
-    }
+    //$scope.LoadMasterData = function () {
+    //    $http.get(urlBase + "getObservationMasterData")
+    //    .success(function (result, status, header, config) {
+    //        if (result.statusCode) {
 
-    if ($window.sessionStorage.masterData == null || angular.isUndefined($window.sessionStorage.masterData) || $window.sessionStorage.masterData == "{}") {
-        $scope.LoadMasterData();
-    }
-    else {
-        var data = JSON.parse($window.sessionStorage.masterData);
+    //            $scope.locationData.locations = result.data.locationModels;
+    //            $scope.locationLevelData.locationLevels = result.data.locationLevelModel;
+    //            $scope.personClasses = result.data.personClassModels;
+    //            $scope.obsMethods = result.data.safetyObservationType;
+    //            $scope.recommendationLevels = result.data.recommendationLevelModels;
+    //            $scope.currencies = result.data.currencies;
+    //            $scope.soTourDynamicQuestions = result.data.soTourDynamicQuestions;
+    //            $scope.soTourResultDynamicQuestions = result.data.soTourResultDynamicQuestions;
+    //            $scope.unitGroupTypes = result.data.unitGroupTypes;
+    //        }
+    //    })
+    //}
+
+    //if ($window.sessionStorage.masterData == null || angular.isUndefined($window.sessionStorage.masterData) || $window.sessionStorage.masterData == "{}") {
+    //    $scope.LoadMasterData();
+    //}
+    //else {
+        //var data = JSON.parse($window.sessionStorage.masterData);
         //var data = $window.sessionStorage.data;
-        $scope.locationData.locations = data.locationModels;
-        $scope.locationLevelData.locationLevels = data.locationLevelModel;
-        $scope.personClasses = data.personClassModels;
-        $scope.obsMethods = data.safetyObservationType;
-        $scope.recommendationLevels = data.recommendationLevelModels;
-        $scope.currencies = data.currencies;
-        $scope.soTourDynamicQuestions = data.soTourDynamicQuestions;
-        $scope.soTourResultDynamicQuestions = data.soTourResultDynamicQuestions;
-        $scope.unitGroupTypes = data.unitGroupTypes;
-    }
+        $scope.locationData.locations = $rootScope.locationModels;
+        $scope.locationLevelData.locationLevels = $rootScope.locationLevelModel;
+        $scope.personClasses = $rootScope.personClassModels;
+        $scope.obsMethods = $rootScope.safetyObservationType;
+        $scope.recommendationLevels = $rootScope.recommendationLevelModels;
+        $scope.currencies = $rootScope.currencies;
+        $scope.soTourDynamicQuestions = $rootScope.soTourDynamicQuestions;
+        $scope.soTourResultDynamicQuestions = $rootScope.soTourResultDynamicQuestions;
+        $scope.unitGroupTypes = $rootScope.unitGroupTypes;
+    //}
 
     $scope.observationCopy = {};
 
     $scope.LoadData = function () {
-       
-            $http.get(urlBase + "GetSOTDetails/" + $scope.id)
-            .success(function (result, status, header, config) {
-                if (result.statusCode) {
-                    $scope.observation = result.data;
-                    if ($scope.id != 0) {
-                        angular.copy($scope.observation, $scope.observationCopy);
 
-                        var datePart = $scope.observation.tourDateTime.split('-');
-                        $scope.observation.tourDateTime = new Date(parseInt(datePart[2]), parseInt(datePart[0]), parseInt(datePart[1]));
-                        for (var i = 0; i < $scope.observation.soTResults.length; i++) {
-                            var result = $scope.observation.soTResults[i];
-                            result.completedColor = $scope.getCompletedColor(result.completed);
-                            result.pendingColor = $scope.getPendingColor(result.pending);
-                            result.overdueColor = $scope.getOverdueColor(result.overdue);
+        $http.get(urlBase + "GetSOTDetails/" + $scope.id)
+        .success(function (result, status, header, config) {
+            if (result.statusCode) {
+                $scope.observation = result.data;
+                if ($scope.id != 0) {
+                    angular.copy($scope.observation, $scope.observationCopy);
+
+                    var datePart = $scope.observation.tourDateTime.split('-');
+                    $scope.observation.tourDateTime = new Date(parseInt(datePart[2]), parseInt(datePart[0]), parseInt(datePart[1]));
+                    for (var i = 0; i < $scope.observation.soTResults.length; i++) {
+                        var result = $scope.observation.soTResults[i];
+                        result.completedColor = $scope.getCompletedColor(result.completed);
+                        result.pendingColor = $scope.getPendingColor(result.pending);
+                        result.overdueColor = $scope.getOverdueColor(result.overdue);
+                    }
+
+                    var locData = [];
+                    var arrResult = $($scope.locationData.locations).filter(function (i, n) { return n.dLocationID === $scope.observation.locationID });
+                    if (arrResult.length > 0) {
+                        var currLoc = arrResult[0];
+                        while (true) {
+                            locData.push(currLoc);
+                            if (currLoc.parentLocId == 0)
+                                break;
+
+                            arrResult = $($scope.locationData.locations).filter(function (i, n) { return n.dLocationID === currLoc.parentDLocationID });  //$scope.getLocation(currLoc.parentLocId);
+
+                            if (arrResult.length > 0) {
+                                currLoc = arrResult[0];
+                            } else {
+                                break;
+                            }
                         }
 
-                        var locData = [];
-                        var arrResult = $($scope.locationData.locations).filter(function (i, n) { return n.dLocationID === $scope.observation.locationID });
-                        if (arrResult.length > 0) {
-                            var currLoc = arrResult[0];
-                            while (true) {
-                                locData.push(currLoc);
-                                if (currLoc.parentLocId == 0)
-                                    break;
+                        var locData = locData.reverse();
+                        $scope.locationLevelData.locationLevels[0].locId = locData[0].dLocationID;
+                        $scope.locationLevelData.locationLevels[0].locationName = locData[0].locationName;
+                        var index = 1;
+                        for (; index < locData.length; index++) {
+                            $scope.locationLevelData.locationLevels[index].parentLocId = locData[index - 1].dLocationID;
+                            $scope.locationLevelData.locationLevels[index].locId = locData[index].dLocationID;
+                            $scope.locationLevelData.locationLevels[index].locationName = locData[index].locationName;
+                        }
 
-                                arrResult = $($scope.locationData.locations).filter(function (i, n) { return n.dLocationID === currLoc.parentDLocationID });  //$scope.getLocation(currLoc.parentLocId);
-
-                                if (arrResult.length > 0) {
-                                    currLoc = arrResult[0];
-                                } else {
-                                    break;
-                                }
-                            }
-
-                            var locData = locData.reverse();
-                            $scope.locationLevelData.locationLevels[0].locId = locData[0].dLocationID;
-                            $scope.locationLevelData.locationLevels[0].locationName = locData[0].locationName;
-                            var index = 1;
-                            for (; index < locData.length; index++) {
-                                $scope.locationLevelData.locationLevels[index].parentLocId = locData[index - 1].dLocationID;
-                                $scope.locationLevelData.locationLevels[index].locId = locData[index].dLocationID;
-                                $scope.locationLevelData.locationLevels[index].locationName = locData[index].locationName;
-                            }
-
-                            for (; index < $scope.locationLevelData.locationLevels.length; index++) {
-                                $scope.locationLevelData.locationLevels[index].parentLocId = $scope.locationLevelData.locationLevels[index - 1].locId;
-                                $scope.locationLevelData.locationLevels[index].locId = -1;
-                                $scope.locationLevelData.locationLevels[index].locationName = "";
-                            }
+                        for (; index < $scope.locationLevelData.locationLevels.length; index++) {
+                            $scope.locationLevelData.locationLevels[index].parentLocId = $scope.locationLevelData.locationLevels[index - 1].locId;
+                            $scope.locationLevelData.locationLevels[index].locId = -1;
+                            $scope.locationLevelData.locationLevels[index].locationName = "";
                         }
                     }
                 }
-            })
+            }
+        })
     }
 
     $scope.sotRowEditNum = -1;
@@ -606,8 +604,7 @@
         $scope.datepicker.openedTourDate = false;
     })
 
-    $scope.updateSafetyMethodType = function ()
-    {
+    $scope.updateSafetyMethodType = function () {
         var arrResult = $($scope.obsMethods).filter(function (i, n) { return n.lupID.toString() === $scope.observation.safetyObservationTypeID });
         if (arrResult.length > 0) {
             var safetyObsTypeData = arrResult[0];
@@ -615,11 +612,9 @@
             $scope.observation.observationType = safetyObsTypeData.lupValue;
             $scope.observation.sotMethodDynamicQs = [];
 
-            for (var index = 0; index < safetyObsTypeData.soTypeQuestions.length; index++)
-            {
+            for (var index = 0; index < safetyObsTypeData.soTypeQuestions.length; index++) {
                 var question = safetyObsTypeData.soTypeQuestions[index];
-                if (!question.inActive)
-                {
+                if (!question.inActive) {
                     var dynQuestion = {
                         answer: "",
                         answerId: -1,
@@ -640,7 +635,7 @@
     }
 
     $scope.cancelTeamMember = function () {
-        if ($scope.observation.soTourTeam[$scope.sotRowEditNum].soTourTeamID<=0)
+        if ($scope.observation.soTourTeam[$scope.sotRowEditNum].soTourTeamID <= 0)
             $scope.observation.soTourTeam.splice($scope.sotRowEditNum, 1);
         $scope.sotRowEditNum = -1;
         $scope.teamSubmitted = false;
@@ -686,7 +681,7 @@
             $http.post(urlBase + "UpdateSOTour", $scope.observation)
             .success(function (result, status, header, config) {
                 if (result.statusCode) {
-                    $window.location.href = 'GetList';
+                    $state.go('Default.Home.Observations.List');
                 }
             })
         } else {
@@ -701,18 +696,16 @@
     $scope.UpdateDisplayAnswer = function (questionModel) {
         questionModel.displayAnswer = questionModel.answer;
     }
-    
+
 
     $scope.CancelData = function () {
-        $window.location.href = 'GetList';
+        $state.go('Default.Home.Observations.List');
     }
 
-    $scope.UpdateMultipleAnswerNew = function (question)
-    {
+    $scope.UpdateMultipleAnswerNew = function (question) {
         var questionIDs = [];
         var displayAns = [];
-        for (i = 0; i <= question.multipleAnswers.length - 1; i++)
-        {
+        for (i = 0; i <= question.multipleAnswers.length - 1; i++) {
             var selectedItem = JSON.parse(question.multipleAnswers[i]);
             questionIDs.push(selectedItem.questionLupAnswerId);
             displayAns.push(selectedItem.answer);
@@ -732,7 +725,7 @@
     $scope.toggleView = function () {
         if ($scope.enableEdit) {
             $scope.enableEdit = false;
-            
+
         } else {
             $scope.enableEdit = true;
         }
@@ -808,6 +801,7 @@
     }
 
     $scope.LoadData();
-    
-}
+
+}]);
+
 
