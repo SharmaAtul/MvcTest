@@ -1,8 +1,6 @@
-﻿function logoutController($scope, $window)
-{
-    $scope.logout = function ()
-    {
+﻿angular.module('app').controllerProvider.register('logoutController', ['$scope', '$window', '$location', '$state', function ($scope, $window, $location, $state) {
+    $scope.logout = function () {
         $window.sessionStorage.clear();
-        $window.location.href = 'Login';
+        $state.go("Login");
     }
-}
+}]);

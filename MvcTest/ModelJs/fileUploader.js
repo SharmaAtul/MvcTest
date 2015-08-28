@@ -1,4 +1,4 @@
-﻿function fileUpload($http) {
+﻿angular.module('app').provide.service('fileUpload', ['$http', function ($http) {
 
     var urlBase = 'http://localhost:26996/ServiceIOS.svc/';
 
@@ -18,9 +18,9 @@
         .error(function () {
         });
     }
-}
+}]);
 
-function fileModel($parse) {
+angular.module('app').compileProvider.directive('fileModel', ['$parse', function ($parse) {
     return {
         restrict: 'A',
         //scope:{
@@ -36,9 +36,9 @@ function fileModel($parse) {
 
                 //    modelSetter(scope, element[0].files[0]);
                 //    scope.myFile = element[0].files[0];
-                    
+
                 //});
             });
         }
     };
-}
+}]);

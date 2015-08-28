@@ -1,4 +1,4 @@
-﻿function ngLocation ($compile) {
+﻿angular.module('app').compileProvider.directive('ngLocation', ['$compile', function ($compile) {
     return {
         restrict: 'A',
         replace: true,
@@ -43,10 +43,10 @@
             responseHTML += '>{{location.locationName}}'
             responseHTML += '</option></select>'
             //responseHTML += '</td></tr>'
-            
+
             element.html(responseHTML);
             $compile(element.contents())(scope);
         }
 
     };
-}
+}]);

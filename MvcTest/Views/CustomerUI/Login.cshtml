@@ -1,52 +1,4 @@
-﻿@{
-    Layout = null;
-}
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Login</title>
-    <script src="~/Scripts/jquery-2.1.4.js"></script>
-    <script src="~/Scripts/jquery.validate.js"></script>
-    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
-    <script src="~/Scripts/js/bootstrap.min.js"></script>
-    
-    <script src="~/Scripts/angular.js"></script>
-
-    <link href="~/Scripts/css/bootstrap.css" rel="stylesheet" />
-    <link href="~/Scripts/css/bootstrap-theme.min.css" rel="stylesheet" />
-    <script src="~/Scripts/ui-bootstrap-custom-tpls-0.13.2.min.js"></script>
-
-    <script src="~/ModelJs/Login.js"></script>
-    <script src="~/ModelJs/AppConfig.js"></script>
-    <link href="~/Scripts/custom.css" rel="stylesheet" />
-    
-   @* <script src="~/Jasmine/jasmine.js"></script>
-    <script src="~/Jasmine/jasmine-html.js"></script>
-    <script src="~/Jasmine/boot.js"></script>
-    <script src="~/Jasmine/console.js"></script>
-    <script src="~/Scripts/angular-mocks.js"></script>
-    <link href="~/Jasmine/jasmine.css" rel="stylesheet" />*@
-</head>
-    <script type="text/javascript" language="javascript">
-        //var app = angular.module("myapp", ['ui.bootstrap', 'ngMock']);
-        var app = angular.module("myapp", ['ui.bootstrap']);
-        
-        app.controller("loginModel", loginModel);
-        app.factory("rememberMe", rememberMe);
-        app.factory("encryptModule", encryptModule);
-        app.factory('authInterceptor', authInterceptor);
-        
-        app.directive("httpLoader", httpLoader);
-
-        app.config(function ($httpProvider) {
-            $httpProvider.interceptors.push('authInterceptor');
-        });
-
-    </script>
-<body ng-app="myapp">
+﻿
     <div class="container">
     <div class="content" style="width:500px; background-color:gainsboro" ng-controller="loginModel">
         <div class='modal' data-backdrop='static' data-keyboard='false' http-loader>
@@ -109,6 +61,3 @@
     </div>
 </div>
     
-
-</body>
-</html>
